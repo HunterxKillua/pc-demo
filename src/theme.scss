@@ -1,0 +1,38 @@
+@forward 'element-plus/theme-chalk/src/common/var.scss' with (
+  /* 覆盖主题色 */
+  $colors: (
+    // 'white': #ffffff,
+    // 'black': #000000,
+    // 'primary': (
+    //   'base': #409eff,
+    // ),
+    // 'success': (
+    //   'base': #67c23a,
+    // ),
+    // 'warning': (
+    //   'base': #e6a23c,
+    // ),
+    // 'danger': (
+    //   'base': #f56c6c,
+    // ),
+    // 'error': (
+    //   'base': #f56c6c,
+    // ),
+    // 'info': (
+    //   'base': #909399,
+    // ),
+    'primary': (
+      'base': teal,
+    )
+  ),
+  /* 覆盖字体大小 */
+  $font-size: (
+    // 'extra-large': 20px,
+    // 'large': 18px,
+    // 'medium': 16px,
+    // 'base': 14px,
+    // 'small': 13px,
+    // 'extra-small': 12px,
+  )
+  /* 以及其它css变量在源文件中按需修改 */
+);

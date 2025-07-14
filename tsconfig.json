@@ -1,0 +1,84 @@
+{
+  "compilerOptions": {
+    "incremental": true,
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "target": "ES2020",
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+    "lib": [
+      "ESNext",
+      "Dom",
+      "WebWorker"
+    ],
+    "moduleDetection": "force",
+    "useDefineForClassFields": true,
+    "experimentalDecorators": true,
+
+    /* resolve assets */
+    "baseUrl": ".",
+    "module": "ESNext",
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ],
+      "~/*": [
+        "src/types/*"
+      ],
+      "~icon/*": [
+        "src/assets/image/icon/*"
+      ],
+      "~img/*": [
+        "src/assets/image/img/*"
+      ],
+      "~types/*": [
+        "src/types/*"
+      ],
+      "~store/*": [
+        "src/store/*"
+      ],
+      "~api/*": [
+        "src/api/*"
+      ]
+    },
+    "resolveJsonModule": true,
+    "types": [
+      "element-plus/global",
+      "vite/client",
+      "unplugin-vue-macros/macros-global" /* ... */
+    ],
+    "allowImportingTsExtensions": true,
+    "allowJs": true,
+    /* Linting */
+    "strict": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noEmit": true,
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue"
+  ],
+  "vueCompilerOptions": {
+    "target": 3,
+    "plugins": [
+      "@vue-macros/volar/define-options",
+      "@vue-macros/volar/define-models",
+      "@vue-macros/volar/define-props",
+      "@vue-macros/volar/define-props-refs",
+      "@vue-macros/volar/short-vmodel",
+      "@vue-macros/volar/define-slots",
+      "@vue-macros/volar/short-bind"
+    ]
+    // ...
+  }
+}
