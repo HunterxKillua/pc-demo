@@ -3,6 +3,7 @@ import type { UserModule } from './types'
 import router from './router'
 import App from './App.vue'
 import 'virtual:uno.css'
+import './var.css'
 
 const app = createApp(App)
 app.config.performance = false // 关闭性能分析 如使用vue devtool的开发环境可自行开启

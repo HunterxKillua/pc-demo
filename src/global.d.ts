@@ -22,4 +22,10 @@ declare global {
     }
     export interface IntrinsicAttributes extends ReservedProps {}
   }
+
+  // Element Plus 在ts文件中的类型声明
+  const ElMessage: typeof import('element-plus')['ElMessage']
+  const ElMessageBox: typeof import('element-plus')['ElMessageBox']
+  const ElNotification: typeof import('element-plus')['ElNotification']
+  const ElLoading: typeof import('element-plus')['ElLoading']
 }

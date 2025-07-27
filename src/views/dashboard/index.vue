@@ -11,7 +11,7 @@ const accountStore = useAccountStore()
 const { token, userInfo } = storeToRefs(accountStore)
 const msg = ref('')
 const value = $ref('shortBind')
-console.log(isRef(token.value), isRef(userInfo))
+console.log(isRef(token.value), isRef(userInfo), userInfo)
 
 function onClick() {
   window.location.href = `${import.meta.env.VITE_CAS_API}/cas/login?service=${window.origin}${import.meta.env.VITE_APP_PATH}`

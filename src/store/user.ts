@@ -1,5 +1,3 @@
-// import { acceptHMRUpdate, defineStore } from 'pinia'
-
 export const useAccountStore = defineStore('user', () => {
   const token = ref<string>('')
   const userInfo = reactive<{
