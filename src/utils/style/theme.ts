@@ -39,14 +39,16 @@ export function setColor(options: ThemeProperty) {
 export function setTheme(options: OptionTheme) {
   const { primary, success, info, warning, danger } = options
   const vars = {}
-  primary
-  && Object.assign(vars, createCssVars('primary', primary), { '--el-color-primary': primary })
-  success
-  && Object.assign(vars, createCssVars('success', success), { '--el-color-success': success })
-  info && Object.assign(vars, createCssVars('info', info), { '--el-color-info': info })
-  warning
-  && Object.assign(vars, createCssVars('warning', warning), { '--el-color-warning': warning })
-  danger && Object.assign(vars, createCssVars('danger', danger), { '--el-color-danger': danger })
+  if (primary)
+    Object.assign(vars, createCssVars('primary', primary), { '--el-color-primary': primary })
+  if (success)
+    Object.assign(vars, createCssVars('success', success), { '--el-color-success': success })
+  if (info)
+    Object.assign(vars, createCssVars('info', info), { '--el-color-info': info })
+  if (warning)
+    Object.assign(vars, createCssVars('warning', warning), { '--el-color-warning': warning })
+  if (danger)
+    Object.assign(vars, createCssVars('danger', danger), { '--el-color-danger': danger })
   Object.entries(vars).forEach(([key, value]) => {
     root.style.setProperty(key, value as string)
   })

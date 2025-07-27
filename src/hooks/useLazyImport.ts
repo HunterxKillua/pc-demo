@@ -1,6 +1,4 @@
 import type { Component, DefineComponent } from 'vue'
-import { defineAsyncComponent, defineComponent, h } from 'vue'
-import { ElLoading, ElMessage } from 'element-plus'
 
 export interface Fn<T = any, R = T> {
   (...arg: T[]): R

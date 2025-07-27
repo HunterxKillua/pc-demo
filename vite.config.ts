@@ -7,6 +7,7 @@ import ElementPlus from 'unplugin-element-plus'
 import UnoCSS from 'unocss/vite'
 import VueJsx from '@vitejs/plugin-vue-jsx'
 import VueMacros from 'unplugin-vue-macros/vite'
+import AutoImport from 'unplugin-auto-import/vite'
 import { type Plugin, defineConfig } from 'vite'
 
 // 在构建前清理 dist 目录 如果不清除dist在打包时会unocss扫描入口文件会报错
@@ -57,7 +58,17 @@ export default defineConfig(({ command }) => {
       Components({
         resolvers: [ElementPlusResolver({
           importStyle: 'sass',
-        })],
+        })], // ts编译无法识别到自动引入的组件类型，需要手动引入
+        // include: [/\.vue$/, /\.vue\?vue/, /\.md$/, /\.tsx$/],
+      }),
+      AutoImport({
+        imports: [
+          'vue',
+          'vue-router',
+        ],
+        resolvers: [
+          ElementPlusResolver(),
+        ],
       }),
       VueMacros({
         defineOptions: true,

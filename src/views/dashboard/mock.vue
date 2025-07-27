@@ -1,7 +1,6 @@
 <script setup lang="tsx">
-import { onMounted, reactive } from 'vue'
-import { ElButton, ElMessage } from 'element-plus'
 import Cookie from 'js-cookie'
+import { ElButton } from 'element-plus'
 import { createHurricaneToken, getSystemUserInfo } from '~api/index'
 
 const userInfo = reactive<{

@@ -1,6 +1,5 @@
 import axios from 'axios'
 import type { AxiosInstance, AxiosRequestConfig } from 'axios'
-import { ElMessage } from 'element-plus'
 import type { Router } from 'vue-router'
 import type { UserModule } from '~types/index'
 
@@ -14,7 +13,7 @@ export interface ServerExtraOption {
 
 export interface PendingTask {
   config: AxiosRequestConfig
-  resolve: Function
+  resolve: (...args: any[]) => void
   // reject: Function
 }
 
@@ -134,7 +133,7 @@ export function httpRequest(config: ServerParams, extraOptions?: ServerExtraOpti
           }
         }
         catch (e) {
-          console.log('刷新token失败, 登出处理')
+          console.log('刷新token失败, 登出处理', e)
         }
         ElMessage.error('登录过期')
         RouterConfig?.router?.replace({ name: 'login' })

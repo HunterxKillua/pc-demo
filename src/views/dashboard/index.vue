@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { isRef, ref } from 'vue'
-import { ElButton, ElInput } from 'element-plus'
 import { Icon } from '@iconify/vue'
 import Test from './components/test.vue'
 import Test1 from './components/transformRef.vue'

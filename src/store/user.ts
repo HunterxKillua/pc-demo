@@ -1,5 +1,4 @@
-import { acceptHMRUpdate, defineStore } from 'pinia'
-import { reactive, ref } from 'vue'
+// import { acceptHMRUpdate, defineStore } from 'pinia'
 
 export const useAccountStore = defineStore('user', () => {
   const token = ref<string>('')
