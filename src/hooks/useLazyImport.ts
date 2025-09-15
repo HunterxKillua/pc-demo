@@ -24,9 +24,16 @@ const LoadingComponents = defineComponent({
   },
 })
 
+export interface LazyImportOptions {
+  delay?: number
+  timeout?: number
+  loadingTime?: number
+  showLoading?: boolean
+}
+
 export function useLazyImport<T>(
   loader: Fn,
-  options: { delay?: number, timeout?: number, loadingTime?: number, showLoading?: boolean } = {},
+  options: LazyImportOptions = {},
   LoadingComponent: Components = LoadingComponents,
 ): DefineComponent<T> {
   const { delay = 100, timeout = 2000, loadingTime = 200, showLoading = true } = options
