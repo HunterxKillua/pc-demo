@@ -1,9 +1,11 @@
 <script setup lang="ts">
-
+import Application from './components/common/Application'
 </script>
 
 <template>
-  <RouterView />
+  <Application>
+    <RouterView />
+  </Application>
 </template>
 
 <style lang="scss">
