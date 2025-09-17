@@ -35,6 +35,7 @@ export default defineConfig(({ command }) => {
         '~types/': `${path.resolve(__dirname, 'src')}/types/`,
         '~store/': `${path.resolve(__dirname, 'src')}/store/`,
         '~api/': `${path.resolve(__dirname, 'src')}/api/`,
+        '~components/': `${path.resolve(__dirname, 'src')}/components/`,
       },
     },
     server: {
@@ -66,6 +67,11 @@ export default defineConfig(({ command }) => {
           'vue',
           'vue-router',
           'pinia',
+          '@vueuse/core',
+        ],
+        dirs: [
+          'src/hooks',
+          'src/store',
         ],
         resolvers: [
           ElementPlusResolver(),

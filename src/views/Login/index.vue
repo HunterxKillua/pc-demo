@@ -1,9 +1,9 @@
 <script setup lang="tsx">
 defineRender(() => {
   return (
-    <div>
-      defineRender component
-    </div>
+    <>
+      <div>login page</div>
+    </>
   )
 })
 </script>

@@ -29,8 +29,8 @@ export function usePopup(className?: string, rootElement?: HTMLElement) {
       // 如果是同步组件
       Comp = component
     }
-		// 注意这里无法获取到组件的实例, onVnodeMounted钩子拿到了也会无法访问
-		// 如果做外层的壳需要实例方法，则应该使用template模板语法
+    // 注意这里无法获取到组件的实例, onVnodeMounted钩子拿到了也会无法访问
+    // 如果做外层的壳需要实例方法，则应该使用template模板语法
     const vnode = h(Comp, Object.assign({
       onClose: () => {
         unMount()
@@ -44,7 +44,9 @@ export function usePopup(className?: string, rootElement?: HTMLElement) {
       firstClassName = cacheClass.split(' ')[0]
     }
     const el = root.querySelector(`.${firstClassName}`)
-    if (el) { root.removeChild(el) };
+    if (el) {
+      root.removeChild(el)
+    };
   }
   function isMounted() {
     let firstClassName = ''

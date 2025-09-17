@@ -17,12 +17,20 @@ const router = createRouter({
     {
       path: '/404',
       name: 'NotFound',
-      component: import('@/views/error/404.vue'),
+      component: import('@/views/Error/404.vue'),
+      meta: {
+        isHidden: true,
+        title: 'oops!',
+      },
     },
     {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
-      component: import('@/views/error/404.vue'),
+      component: import('@/views/Error/404.vue'),
+      meta: {
+        isHidden: true,
+        title: 'oops!',
+      },
     },
   ],
 })

@@ -29,3 +29,15 @@ declare global {
   const ElNotification: typeof import('element-plus')['ElNotification']
   const ElLoading: typeof import('element-plus')['ElLoading']
 }
+
+declare module 'vue-router' {
+  interface RouteMeta {
+    title: string
+    isHidden?: boolean
+    order?: number
+    icon?: Component | string
+    authKey?: string
+    keepAlive?: boolean
+    [x: string]: any
+  }
+}

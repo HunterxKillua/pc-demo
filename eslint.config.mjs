@@ -8,6 +8,7 @@ export default antfu({
     'comma-dangle': 'off',
     'object-curly-spacing': 'off',
     'no-unused-vars': 'off',
+    'style/no-tabs': 'off',
     'unused-imports/no-unused-vars': [
       'error',
       {

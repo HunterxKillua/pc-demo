@@ -1,3 +1,17 @@
-::root {
-  --font-size-large: 16px;
+:root {
+  /* font-size */
+  --font-size-large: 20px;
+  --font-size-normal: 16px;
+  --font-size-small: 14px;
+  --font-size-mini: 12px;
+
+  /* background */
+  --bg-default: #f5f5f5;
+
+  /* padding */
+  --padding-box-normal: 20px;
+  
+
+  /* color */
+  --color-text: #6e6e6e;
 }
