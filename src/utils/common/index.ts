@@ -90,3 +90,48 @@ export function getMenuItem(route: RouteRecordRaw, basePath: string = '') {
   }
   return menuItem
 }
+
+/**
+ * 根据条件查找并删除数组中的第一个匹配元素
+ * @param predicate - 判断函数，返回 true 表示匹配
+ */
+export function removeBy<T>(
+  arr: T[],
+  predicate: (item: T, index: number, array: T[]) => boolean,
+): boolean {
+  const index = arr.findIndex(predicate)
+  if (index !== -1) {
+    arr.splice(index, 1)
+    return true
+  }
+  return false
+}
+
+/**
+ * 注入懒加载路由组件的组件名
+ */
+export function injectRouteComponentName(routes: RouteRecordRaw[]): RouteRecordRaw[] {
+  return routes.map((route) => {
+    // 如果有 component 并且是一个函数（动态 import）
+    if (route.component && typeof route.component === 'function') {
+      const comp = route.component as () => Promise<{ default: any }>
+      const compName = route.name as string
+      // 动态 import 是一个函数，给它挂 name
+      const wrapped = () =>
+        comp().then((mod) => {
+          const raw = mod.default
+          if (raw && !raw.name && compName) {
+            raw.name = compName
+          }
+          return mod
+        })
+      route.component = wrapped
+    }
+
+    // 递归处理 children
+    if (route.children && route.children.length > 0) {
+      route.children = injectRouteComponentName(route.children)
+    }
+    return route
+  })
+}

@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
+import { injectRouteComponentName } from '@/utils'
 
 const routeList = Object.values(
   import.meta.glob<{ default: RouteRecordRaw[] }>('./modules/*.ts', { eager: true }),
@@ -12,7 +13,7 @@ const router = createRouter({
       path: '/',
       name: 'App',
       redirect: '/dashboard',
-      children: routeList.flat(),
+      children: injectRouteComponentName(routeList.flat()),
     },
     {
       path: '/404',

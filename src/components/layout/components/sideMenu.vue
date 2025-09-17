@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { RouteRecordRaw } from 'vue-router'
-import { useAppStore } from '@/store/app'
 import { getRouter } from '@/modules/router'
 import { type RenderMenuInterface, isHttpLink } from '@/utils'
 
@@ -8,7 +7,7 @@ const appStore = useAppStore()
 const route = useRoute()
 const router = useRouter()
 const { isCollapse } = storeToRefs(appStore)
-const { getMenus } = appStore
+const { getMenus, setTag } = appStore
 const menus = ref<Record<string, any>[]>([])
 
 const currRoute = computed(() => {
@@ -24,6 +23,16 @@ function handleSelect(e: RenderMenuInterface) {
     router.push(e.path)
   }
 }
+
+watch(() => route.name, () => {
+  setTag({
+    name: (route.name as string) || '',
+    label: route.meta.title,
+    alive: route.meta.keepAlive || false,
+  }, 'add')
+}, {
+  immediate: true,
+})
 
 onMounted(() => {
   const { options } = getRouter() || { routes: [] }
@@ -62,10 +71,9 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .layout-side {
-  width: 200px;
   height: 100%;
   background: #fff;
-  @apply flex flex-col items-center overflow-hidden;
+  @apply flex flex-col items-center overflow-hidden box-border pr-[24px] pl-[12px];
   &-logo {
     height: 50px;
     width: 100%;

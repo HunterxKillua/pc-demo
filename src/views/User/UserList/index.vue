@@ -1,4 +1,6 @@
 <script setup lang="tsx">
+import { getCurrentInstance } from 'vue'
+
 defineRender(() => {
   return (
     <div>
@@ -7,7 +9,8 @@ defineRender(() => {
   )
 })
 onMounted(() => {
-  console.log('2222')
+  const instance = getCurrentInstance()
+  console.log('2222', instance)
 })
 onActivated(() => {
   console.log('trigger cache alive2')

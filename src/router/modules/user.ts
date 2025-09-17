@@ -20,6 +20,7 @@ const routes: RouteRecordRaw[] = [
           icon: Setting,
           order: 1,
           title: '用户列表',
+          keepAlive: true,
         },
       },
       {

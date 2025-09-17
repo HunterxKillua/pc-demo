@@ -1,7 +1,13 @@
 <script setup lang="tsx">
+const appStore = useAppStore()
+const { toggleMenu } = appStore
+const { isCollapse } = storeToRefs(appStore)
 defineRender(() => {
   return (
     <div class="layout-header">
+      <el-button onClick={toggleMenu}>
+        { isCollapse.value ? '展开' : '收起' }
+      </el-button>
       header
     </div>
   )
