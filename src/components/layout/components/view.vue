@@ -29,7 +29,7 @@ function handleClose(tag: MenuTag) {
     </div>
     <div class="layout-view-body">
       <RouterView v-slot="{ Component }">
-        <Transition>
+        <Transition mode="out-in" appear>
           <KeepAlive :include="cacheRoute">
             <component :is="Component" />
           </KeepAlive>

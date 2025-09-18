@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<XSearchInterface>(), {
   hasExpansion: true,
   defaultExpansion: true,
   showColon: false,
-  disableTrim: false,
+  disableTrim: true,
   labelWidth: 80,
 })
 const emits = defineEmits<
@@ -28,6 +28,7 @@ const emits = defineEmits<
     expansion: [value: boolean]
   }
 >()
+const slots = useSlots()
 const defaultDateRangeProps = {
   type: 'daterange',
   rangeSeparator: '至',
@@ -289,11 +290,15 @@ function exposeData() {
 function setExtraData(key: string, val: unknown) {
   searchObj.value[key] = val
 }
+function hasSlot(name: string) {
+  return !!slots[name]
+}
 
 updateRenderList()
 init()
 
 defineExpose({
+  updateRenderList,
   exposeData,
   setExtraData,
 })
@@ -320,7 +325,7 @@ defineExpose({
         {{ item.label }}
       </span>
       <div class="search-item-content">
-        <template v-if="$slots[(item.slotName || item.key) as string]">
+        <template v-if="hasSlot(item.slotName || item.key as string)">
           <slot
             :name="item.slotName || item.key"
             :row="item"
@@ -378,7 +383,7 @@ defineExpose({
       <slot name="fixedRight">
         <ElButton
           v-if="hasReset"
-          class="search-btn mr-12"
+          class="search-btn "
           @click="handleReset"
         >
           重置
