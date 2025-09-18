@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<XSearchInterface>(), {
   hasExpansion: true,
   defaultExpansion: true,
   showColon: false,
-  disableTrim: true,
+  disableTrim: false,
   labelWidth: 80,
 })
 const emits = defineEmits<
@@ -293,7 +293,18 @@ function setExtraData(key: string, val: unknown) {
 function hasSlot(name: string) {
   return !!slots[name]
 }
-
+async function loadAsyncOptions(item: SearchListInterface, query: string) {
+  if (typeof item.asyncOptions === 'function') {
+    try {
+      const res = await item.asyncOptions(query)
+      item.options = res || []
+    }
+    catch (err) {
+      console.error(`[XSearch]: asyncOptions load failed for key=${item.key}`, err)
+      item.options = []
+    }
+  }
+}
 updateRenderList()
 init()
 
@@ -301,6 +312,8 @@ defineExpose({
   updateRenderList,
   exposeData,
   setExtraData,
+  handleSearch,
+  handleReset,
 })
 </script>
 
@@ -317,14 +330,15 @@ defineExpose({
     >
       <span
         v-if="hasLabel && item.label"
-        class="search-item-label" :class="[
-          item.required ? 'search-item-label-required' : '',
-        ]"
+        class="search-item-label"
+        :class="[item.required ? 'search-item-label-required' : '']"
         :style="{ width: `${item.labelWidth || labelWidth}px` }"
       >
         {{ item.label }}
       </span>
+
       <div class="search-item-content">
+        <!-- 插槽 -->
         <template v-if="hasSlot(item.slotName || item.key as string)">
           <slot
             :name="item.slotName || item.key"
@@ -333,6 +347,8 @@ defineExpose({
             :update-key="(val: unknown) => onSlotChange(item.key as string, val)"
           />
         </template>
+
+        <!-- 默认渲染 -->
         <template v-else>
           <component
             :is="getComponentType(item.type)"
@@ -341,6 +357,9 @@ defineExpose({
             v-bind="item.attrs"
             style="width: 100%"
             :collapse-tags="item.attrs && item.attrs.multiple"
+            :remote="!!item.asyncOptions"
+            :filterable="!!item.asyncOptions"
+            :remote-method="item.asyncOptions ? (query: string) => loadAsyncOptions(item, query) : undefined"
             v-on="getEventHandlers(item)"
           >
             <template v-if="item.type === 'select'">
@@ -351,6 +370,7 @@ defineExpose({
                 :value="option.value"
               />
             </template>
+
             <template v-else-if="item.type && item.type.includes('checkbox')">
               <el-checkbox
                 v-for="option in item.options"
@@ -360,6 +380,7 @@ defineExpose({
                 {{ option.label }}
               </el-checkbox>
             </template>
+
             <template v-else-if="item.type && item.type.includes('radio')">
               <el-radio
                 v-for="option in item.options"
@@ -373,27 +394,18 @@ defineExpose({
         </template>
       </div>
     </div>
+    <!-- 按钮区域 -->
     <div
-      class="x-search-btns" :class="[
-        expansion ? 'x-search-btns-left' : 'x-search-btns-right',
-      ]"
+      class="x-search-btns"
+      :class="[expansion ? 'x-search-btns-left' : 'x-search-btns-right']"
       :style="{ marginLeft: `${labelWidth / 2}px` }"
     >
       <slot name="button" />
       <slot name="fixedRight">
-        <ElButton
-          v-if="hasReset"
-          class="search-btn "
-          @click="handleReset"
-        >
+        <ElButton v-if="hasReset" class="search-btn" @click="handleReset">
           重置
         </ElButton>
-        <ElButton
-          v-if="hasSearch"
-          type="primary"
-          class="search-btn"
-          @click="handleSearch"
-        >
+        <ElButton v-if="hasSearch" type="primary" class="search-btn" @click="handleSearch">
           查询
         </ElButton>
         <span

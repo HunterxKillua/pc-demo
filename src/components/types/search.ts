@@ -8,6 +8,7 @@ export interface SearchListInterface {
   label: string
   defaultValue?: boolean | string | number | unknown[]
   options?: Record<string, any>
+  asyncOptions?: (query: string) => Promise<{ label: string, value: string | number }[]>
   attrs?: Record<string, any>
   hidden?: boolean
   events?: Record<string, any>
@@ -34,4 +35,12 @@ export interface XSearchInterface {
   hasExpansion?: boolean
   defaultExpansion?: boolean
   disableTrim?: boolean
+}
+
+export interface XSearchInstance {
+  updateRenderList: () => void
+  exposeData: () => Record<string, any>
+  setExtraData: (key: string, val: unknown) => void
+  handleSearch: () => void
+  handleReset: () => void
 }

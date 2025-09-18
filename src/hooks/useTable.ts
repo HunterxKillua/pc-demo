@@ -1,11 +1,16 @@
 import type { XTableColumn, XTableExpose, XTablePager } from '~components/types/table'
 
 /**
- *
- * @param params 请求参数 参考xSearch
+ * @param linkSearch 如果关联XSearch使用 则不触发WatchEffect的effect函数
+ * @param externalParams 单独使用时的额外参数
  * @param fn 返回处理完的tableData方法
  */
-export function useTable(columnData: XTableColumn[], params: Record<string, any>, fn: (args: Record<string, any>) => Promise<{ data: Record<string, any>[], total?: number }>) {
+export function useTable(
+  columnData: XTableColumn[],
+  fn: (args: Record<string, any>) => Promise<{ data: Record<string, any>[], total?: number }>,
+  linkSearch: boolean = false,
+  externalParams?: Record<string, any>,
+) {
   const tableData: Ref<Record<string, any>[]> = ref([])
   const total = ref<number>(0)
   const columns = ref(columnData)
@@ -16,12 +21,11 @@ export function useTable(columnData: XTableColumn[], params: Record<string, any>
   const tableInstance = ref<XTableExpose | null>(null)
   const loading = ref<boolean>(false)
   const showPagination = ref<boolean>(true)
-  watchEffect(async () => {
+  const toQuery = async (params: Record<string, any>) => {
     loading.value = true
     const res = await fn({
       ...params,
-      pageSize: pager.value.pageSize,
-      pageNum: pager.value.pageNum,
+      ...externalParams,
     })
     tableData.value = [...res.data]
     total.value = Number(res.total)
@@ -29,6 +33,14 @@ export function useTable(columnData: XTableColumn[], params: Record<string, any>
     nextTick(() => {
       tableInstance.value?.resetSelection()
     })
+  }
+  watchEffect(async () => {
+    if (!linkSearch) {
+      toQuery({
+        ...externalParams,
+        ...unref(pager.value),
+      })
+    }
   })
   return {
     columns,
@@ -38,5 +50,6 @@ export function useTable(columnData: XTableColumn[], params: Record<string, any>
     loading,
     showPagination,
     tableInstance,
+    toQuery,
   }
 }

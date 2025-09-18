@@ -3,9 +3,9 @@ import XSearch from '~components/common/xSearch/index.vue'
 import XTable from '~components/common/xTable/index.vue'
 import type { XTableColumn } from '~components/types/table'
 import type { SearchListInterface } from '~components/types/search'
-import { useTable } from '@/hooks/useTable'
+import { useSearchTable } from '@/hooks/useSearchTable'
 
-const listSearchFields = ref<SearchListInterface[]>([
+const listSearchFields: SearchListInterface[] = [
   {
     key: 'prizeName',
     label: '活动商品名称',
@@ -17,6 +17,18 @@ const listSearchFields = ref<SearchListInterface[]>([
     label: '渠道',
     type: 'select',
     options: [],
+    asyncOptions: () => new Promise((resolve) => {
+      resolve([
+        {
+          label: 'vue',
+          value: 'vue',
+        },
+        {
+          label: 'react',
+          value: 'react',
+        },
+      ])
+    }),
     attrs: {
       clearable: true,
     },
@@ -56,7 +68,7 @@ const listSearchFields = ref<SearchListInterface[]>([
       },
     ],
   },
-])
+]
 const mock = [
   { id: 1, name: '张三', age: 20 },
   { id: 2, name: '李四', age: 25 },
@@ -76,6 +88,7 @@ async function getData(params: Record<string, any>): Promise<{
   data: Record<string, any>[]
   total?: number
 }> {
+  console.log(params)
   return await new Promise((resolve) => {
     setTimeout(() => {
       resolve({
@@ -101,16 +114,23 @@ const col: XTableColumn[] = [
   { prop: 'age', label: '年龄' },
 ]
 
-const { columns, tableData, pager, showPagination, loading, total, tableInstance } = useTable(col, {}, getData)
-
-function handleSearch(conf: Record<string, any>) {
-  console.log(conf)
-}
+const {
+  columns,
+  tableData,
+  pager,
+  showPagination,
+  loading,
+  total,
+  tableInstance,
+  searchList,
+  SearchInstance,
+  onSearch,
+} = useSearchTable(listSearchFields, col, getData)
 </script>
 
 <template>
   <div class="flex flex-col w-[100%] h-[100%] items-center">
-    <XSearch :list="listSearchFields" :col="3" @search="handleSearch">
+    <XSearch ref="SearchInstance" :list="searchList" :col="3" @search="onSearch" @reset="onSearch">
       <template #prizeName>
         <ElTag>slot element</ElTag>
       </template>
