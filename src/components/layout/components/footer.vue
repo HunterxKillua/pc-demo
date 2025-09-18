@@ -2,7 +2,7 @@
 defineRender(() => {
   return (
     <div class="layout-footer">
-      footer
+      hunan design@2025
     </div>
   )
 })

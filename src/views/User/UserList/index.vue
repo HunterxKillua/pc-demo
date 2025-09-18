@@ -3,6 +3,7 @@ import XSearch from '~components/common/xSearch/index.vue'
 import XTable from '~components/common/xTable/index.vue'
 import type { XTableColumn } from '~components/types/table'
 import type { SearchListInterface } from '~components/types/search'
+import { useTable } from '@/hooks/useTable'
 
 const listSearchFields = ref<SearchListInterface[]>([
   {
@@ -56,42 +57,74 @@ const listSearchFields = ref<SearchListInterface[]>([
     ],
   },
 ])
+const mock = [
+  { id: 1, name: '张三', age: 20 },
+  { id: 2, name: '李四', age: 25 },
+]
 
-const columns = ref<XTableColumn[]>([
-  { type: 'radio', label: '选择', rowKey: 'id' }, // radio 列
+function getDemoData(index: number) {
+  return mock.map((item) => {
+    const { id, ...conf } = item
+    return {
+      id: id * index,
+      ...conf,
+    }
+  })
+}
+
+async function getData(params: Record<string, any>): Promise<{
+  data: Record<string, any>[]
+  total?: number
+}> {
+  return await new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({
+        data: getDemoData(params.pageNum),
+        total: 100,
+      })
+    }, 2000)
+  })
+}
+
+const col: XTableColumn[] = [
+  { type: 'radio', label: '选择', rowKey: 'id', attrs: {
+    width: 60,
+  } }, // radio 列
+  { type: 'index', label: '序号', attrs: {
+    width: 100,
+  } },
   { prop: 'name', label: '姓名', render: scope => h(ElButton, {
     type: 'primary',
   }, {
     default: () => `${scope.row.name}render`,
   }) },
   { prop: 'age', label: '年龄' },
-])
+]
 
-const tableData = ref<Record<string, any>[]>([
-  { id: 1, name: '张三', age: 20 },
-  { id: 2, name: '李四', age: 25 },
-])
+const { columns, tableData, pager, showPagination, loading, total, tableInstance } = useTable(col, {}, getData)
 
 function handleSearch(conf: Record<string, any>) {
   console.log(conf)
 }
-
-onMounted(() => {
-  console.log('222')
-})
-onActivated(() => {
-  console.log('trigger cache alive2')
-})
 </script>
 
 <template>
-  <div>
+  <div class="flex flex-col w-[100%] h-[100%] items-center">
     <XSearch :list="listSearchFields" :col="3" @search="handleSearch">
       <template #prizeName>
         <ElTag>slot element</ElTag>
       </template>
     </XSearch>
-    <XTable :columns="columns" :table-data="tableData">
+    <XTable
+      ref="tableInstance"
+      v-model:pager="pager"
+      :total="total"
+      :columns="columns"
+      :table-data="tableData"
+      :loading="loading"
+      :show-pagination="showPagination"
+      class="flex-1 w-[100%]"
+    >
       <template #age="scope">
         <div>{{ scope.row.age }}</div>
         <ElTag>{{ 1 + 1 }}</ElTag>

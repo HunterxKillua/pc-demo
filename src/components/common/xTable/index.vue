@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { uniqBy } from 'lodash-es'
 import { ElPagination, ElRadio, ElTable, ElTableColumn } from 'element-plus'
-import type { XTableColumn, XTableInterface, XTablePager } from '../../types/table'
+import type { XPaginationSize, XTableColumn, XTableInterface, XTablePager } from '../../types/table'
 import RenderColumn from './column.vue'
 
 const props = withDefaults(defineProps<{
@@ -36,10 +36,10 @@ const defaultSetting = {
   layout: 'total, sizes, prev, pager, next, jumper',
   pageSizes: [10, 20, 50, 100],
   max: 5,
-  small: true,
+  size: 'default',
   disabled: false,
   autoHide: false,
-  align: 'flex-end',
+  align: 'justify-end', // 参考原子css的对齐方式
 }
 
 const tableRef = ref<typeof ElTable | null>(null)
@@ -145,10 +145,10 @@ function handleSelectAll(selection: unknown[]) {
     emits('update:defaultSelectedRows', selectedRows.value)
   }
 }
-function getCellFallback(row: Record<string, any>, column: XTableColumn, radioValue?: string | number) {
+function getCellFallback(scope: Record<string, any>, column: XTableColumn, radioValue?: string | number) {
   // 内置 index 类型
   if (column.type === 'index') {
-    return ((props.pager.pageNum - 1) * props.pager.pageSize + (row?.__index ?? 0) + 1).toString?.()
+    return ((props.pager.pageNum - 1) * props.pager.pageSize + (scope.$index ?? 0) + 1).toString?.()
   }
   // ✅ 自定义 radio 类型
   if (column.type === 'radio') {
@@ -159,16 +159,16 @@ function getCellFallback(row: Record<string, any>, column: XTableColumn, radioVa
     return h(ElRadio, {
       'label': '',
       'modelValue': radioValue,
-      'value': row[props.rowsKey],
+      'value': scope.row[props.rowsKey],
       'onUpdate:modelValue': (val: any) => (selectedRow.value = val),
     })
   }
 
   if (column.formatter) {
-    return column.formatter(row, row[column.prop!])
+    return column.formatter(scope.row, scope.row[column.prop!])
   }
 
-  const val = column.prop ? row[column.prop] : ''
+  const val = column.prop ? scope.row[column.prop] : ''
   return val?.toString?.() || '--'
 }
 
@@ -197,10 +197,6 @@ function resetSelection() {
 }
 
 setDefaultSelection()
-
-onMounted(() => {
-  console.log(slots)
-})
 
 defineExpose({
   resetSelection,
@@ -246,7 +242,7 @@ defineExpose({
                 :slot-fn="column.prop ? slots[column.prop] : undefined"
                 :render-fn="column.render"
                 :scope="{ row: scope.row, column, $index: scope.$index }"
-                :fallback-text="getCellFallback(scope.row, column, selectedRow)"
+                :fallback-text="getCellFallback(scope, column, selectedRow)"
               />
             </slot>
           </template>
@@ -269,12 +265,12 @@ defineExpose({
           :page-size="pager.pageSize"
           :current-page="pager.pageNum"
           :total="total"
-          :small="paginationSetting.small"
           :pager-count="paginationSetting.max"
           :layout="paginationSetting.layout"
           :disabled="paginationSetting.disabled"
           :page-sizes="paginationSetting.pageSizes"
           :hide-on-single-page="paginationSetting.autoHide"
+          :size="(paginationSetting.size as XPaginationSize)"
           @size-change="onSizeChange"
           @current-change="onPageChange"
         />

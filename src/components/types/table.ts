@@ -31,3 +31,10 @@ export interface XTableInterface {
   rowsKey?: string
   tableHeight?: number | string
 }
+
+export type XPaginationSize = 'small' | 'default' | 'large'
+
+export interface XTableExpose {
+  resetSelection: () => void
+  resetTable: () => void
+}
