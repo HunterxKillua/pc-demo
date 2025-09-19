@@ -43,3 +43,12 @@ export interface XFormProps {
   bubbleKeys?: string[]
   trim?: boolean
 }
+
+export interface XFormExpose {
+  handleSubmit: () => void
+  clearValidate: () => void
+  validateByKey: (key: string, callback?: (message: boolean) => void) => Promise<boolean>
+  validate: () => Promise<boolean>
+  modifyControlOption: (key: string, val: unknown, reset?: boolean) => void
+  modifyFormData: (data: Record<string, any>) => void
+}

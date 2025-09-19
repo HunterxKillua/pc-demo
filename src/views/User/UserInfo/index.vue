@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { Document } from '@element-plus/icons-vue'
 import XForm from '~components/common/xForm/index.vue'
 import type { XFormField } from '~components/types/form'
+import { useForm } from '@/hooks/useForm'
 
-const formFields = ref<XFormField[]>([
+const fields: XFormField[] = [
   {
     prop: 'username',
     label: '用户名',
@@ -58,30 +58,27 @@ const formFields = ref<XFormField[]>([
       showMessage: false,
     },
   },
-])
-
-const formRef = ref<InstanceType<typeof XForm> | null>(null)
-
-async function handleSubmit() {
-  const res = await formRef.value?.handleSubmit()
-  console.log(res)
-}
+]
 
 function handleReset() {
   console.log('表单已重置')
 }
-
-function testValidate() {
-  formRef.value?.validateByKey('username', (msg) => {
-    console.log('校验结果:', msg)
-  })
+async function submit(data: Record<string, any>) {
+  console.log(data)
 }
 
-function setMockData() {
-  formRef.value?.modifyFormData({
-    username: '张三',
-    gender: 'male',
-    city: 'shanghai',
+const { formFields, FormInstance, onSubmit, toValidate, modifyForm } = useForm(fields, submit)
+
+async function onCheck() {
+  console.log(await toValidate('username'))
+  console.log(await toValidate(['username', 'gender']))
+  console.log(await toValidate())
+}
+
+function onClick() {
+  modifyForm({
+    username: 'lll',
+    gender: 'female',
   })
 }
 
@@ -91,7 +88,7 @@ const remark = ref('')
 <template>
   <div>
     <XForm
-      ref="formRef"
+      ref="FormInstance"
       :form-fields="formFields"
       align="right"
       required
@@ -120,13 +117,13 @@ const remark = ref('')
     </XForm>
 
     <div class="mt-4 flex gap-2">
-      <ElButton type="primary" @click="testValidate">
+      <ElButton type="primary" @click="onCheck">
         触发单字段校验
       </ElButton>
-      <ElButton type="success" @click="setMockData">
+      <ElButton type="success" @click="onClick">
         填充测试数据
       </ElButton>
-      <ElButton type="success" @click="handleSubmit">
+      <ElButton type="success" @click="onSubmit">
         提交表单
       </ElButton>
     </div>

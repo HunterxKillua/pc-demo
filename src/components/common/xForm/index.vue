@@ -201,9 +201,7 @@ function handleReset() {
 }
 
 function clearValidate() {
-  if (formRef.value && typeof formRef.value.clearValidate === 'function') {
-    formRef.value.clearValidate()
-  }
+  formRef.value?.clearValidate()
   Object.assign(formModel, initializeFormModel())
 }
 
@@ -211,24 +209,22 @@ function onSlotChange(key: string, value: any) {
   formModel[key] = value
 }
 
-function validateByKey(key: string, callback?: (msg: any) => void) {
-  if (formRef.value && typeof formRef.value.validateField === 'function') {
-    formRef.value.validateField(key, (msg: any) => {
+function validateByKey(key: string, callback?: (msg: boolean) => void) {
+  return new Promise((resolve) => {
+    formRef.value?.validateField(key, (message: boolean) => {
       if (callback)
-        callback(msg)
+        callback(message)
+      resolve(message)
     })
-  }
+  })
 }
 
 function validate() {
-  if (formRef.value && typeof formRef.value.validate === 'function') {
-    let result = true
-    formRef.value.validate((valid: boolean) => {
-      result = !!valid
+  return new Promise((resolve) => {
+    formRef.value?.validate((valid: boolean) => {
+      resolve(!!valid)
     })
-    return result
-  }
-  return true
+  })
 }
 
 function onFiledChange(row: XFormField, val: any, reset = true) {
@@ -256,7 +252,7 @@ function onFiledChange(row: XFormField, val: any, reset = true) {
   }
 }
 
-function modifyControlOption(key: string, val: any, reset = true) {
+function modifyControlOption(key: string, val: unknown, reset = true) {
   const row = (props.formFields || []).find(item => item.prop === key)
   const conf = row?.options?.find(item => item.value === val)
   if (conf) {
@@ -271,10 +267,9 @@ function modifyControlOption(key: string, val: any, reset = true) {
   }
 }
 
-function modifyFormData(data: Record<string, any>, type = 'source') {
+function modifyFormData(data: Record<string, any>) {
   for (const key in data) {
-    if (type === 'source')
-      formModel[key] = data[key]
+    formModel[key] = data[key]
   }
 }
 
