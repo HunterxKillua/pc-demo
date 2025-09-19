@@ -11,8 +11,23 @@ const cacheRoute = computed(() => {
   return tags.value.filter(item => item.alive).map(item => item.name)
 })
 
+const activeTag = computed(() => {
+  return route.name
+})
+
 function handleClose(tag: MenuTag) {
-  setTag(tag, 'remove')
+  const cacheTag = setTag(tag, 'remove')
+  if (cacheTag.length) {
+    if (tag.name === activeTag.value) {
+      const ele = cacheTag[cacheTag.length - 1]
+      router.push({
+        name: ele.name,
+      })
+    }
+  }
+  else {
+    router.replace('/dashboard')
+  }
 }
 
 function onClick(tag: MenuTag) {
@@ -32,6 +47,7 @@ function onClick(tag: MenuTag) {
         :key="tag.name"
         closable
         :disable-transitions="false"
+        :type="activeTag === tag.name ? 'primary' : 'info'"
         @click="() => onClick(tag)"
         @close="handleClose(tag)"
       >

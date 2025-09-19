@@ -141,5 +141,9 @@ function onMouseLeave(id: 2) {
     <button v-mouse:200.mouseleave="() => onMouseLeave(2)">
       鼠标离开延迟触发
     </button>
+
+    <div v-ellipsis="2" style="width: 50px;">
+      这是一段很长的文本，用于测试 v-ellipsis-tooltip 指令。超出两行将自动显示 Element Plus Tooltip。
+    </div>
   </div>
 </template>

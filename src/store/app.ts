@@ -46,7 +46,7 @@ export const useAppStore = defineStore('app', () => {
   /**
    * @description 设置路由tag
    */
-  const setTag = (tag: MenuTag, action: 'add' | 'remove') => {
+  const setTag = (tag: MenuTag, action: 'add' | 'remove'): MenuTag[] => {
     const filterList = ['Login', 'NotFound']
     if (action === 'add' && tag.name && !filterList.includes(tag.name)) {
       const status = tags.value.some(item => item.name === tag.name)
@@ -57,6 +57,7 @@ export const useAppStore = defineStore('app', () => {
     else {
       removeBy(tags.value, item => item.name === tag.name)
     }
+    return tags.value
   }
   /**
    * @description 手动移除tag标签
