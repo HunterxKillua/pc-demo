@@ -2,6 +2,8 @@
 import type { MenuTag } from '@/store/app'
 
 const appStore = useAppStore()
+const router = useRouter()
+const route = useRoute()
 const { tags } = storeToRefs(appStore)
 const { setTag } = appStore
 
@@ -11,6 +13,14 @@ const cacheRoute = computed(() => {
 
 function handleClose(tag: MenuTag) {
   setTag(tag, 'remove')
+}
+
+function onClick(tag: MenuTag) {
+  if (tag.name !== route.name) {
+    router.push({
+      name: tag.name,
+    })
+  }
 }
 </script>
 
@@ -22,6 +32,7 @@ function handleClose(tag: MenuTag) {
         :key="tag.name"
         closable
         :disable-transitions="false"
+        @click="() => onClick(tag)"
         @close="handleClose(tag)"
       >
         {{ tag.label }}

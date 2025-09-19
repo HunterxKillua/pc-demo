@@ -11,7 +11,10 @@ export interface MenuTag {
 export const useAppStore = defineStore('app', () => {
   const isCollapse = ref(false)
   const tags = ref<MenuTag[]>([]) // 路由历史
-  const permissions: Ref<RouteRecordRaw[]> = ref([])
+  const permissions = ref<string[]>([
+    'btn:export',
+    'btn:delete',
+  ])
   const toggleMenu = () => {
     isCollapse.value = !isCollapse.value
   }

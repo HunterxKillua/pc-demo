@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import XSearch from '~components/common/xSearch/index.vue'
 import XTable from '~components/common/xTable/index.vue'
+import TableAction from '~components/common/xTable/action.vue'
 import type { XTableColumn } from '~components/types/table'
 import type { SearchListInterface } from '~components/types/search'
 import { useSearchTable } from '@/hooks/useSearchTable'
@@ -112,6 +113,13 @@ const col: XTableColumn[] = [
     default: () => `${scope.row.name}render`,
   }) },
   { prop: 'age', label: '年龄' },
+  {
+    prop: 'action',
+    label: '操作',
+    attrs: {
+      width: 210,
+    },
+  },
 ]
 
 const {
@@ -148,6 +156,27 @@ const {
       <template #age="scope">
         <div>{{ scope.row.age }}</div>
         <ElTag>{{ 1 + 1 }}</ElTag>
+      </template>
+      <template #action>
+        <TableAction :boundary="3" align="center" trigger="click">
+          <ElButton type="primary" link>
+            编辑
+          </ElButton>
+          <ElButton type="success" link>
+            查看
+          </ElButton>
+
+          <!-- 有权限控制 -->
+          <ElButton v-auth="'btn:delete'" type="danger" link>
+            删除
+          </ElButton>
+          <ElButton v-auth:disabled="'btn:export'" type="warning" link>
+            导出
+          </ElButton>
+          <ElButton v-auth:show="'btn:print'" type="info" link>
+            打印
+          </ElButton>
+        </TableAction>
       </template>
     </XTable>
   </div>

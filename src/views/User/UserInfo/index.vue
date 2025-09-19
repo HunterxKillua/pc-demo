@@ -83,6 +83,13 @@ function onClick() {
 }
 
 const remark = ref('')
+
+function onMouseEnter(id: number) {
+  console.log(id)
+}
+function onMouseLeave(id: 2) {
+  console.log(id)
+}
 </script>
 
 <template>
@@ -127,5 +134,12 @@ const remark = ref('')
         提交表单
       </ElButton>
     </div>
+
+    <button v-mouse:500.mouseenter="() => onMouseEnter(1)">
+      鼠标进入延迟触发
+    </button>
+    <button v-mouse:200.mouseleave="() => onMouseLeave(2)">
+      鼠标离开延迟触发
+    </button>
   </div>
 </template>
