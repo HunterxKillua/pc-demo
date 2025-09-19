@@ -375,20 +375,16 @@ defineExpose({
               <el-checkbox
                 v-for="option in item.options"
                 :key="option.value"
-                :label="option.value"
-              >
-                {{ option.label }}
-              </el-checkbox>
+                v-bind="option"
+              />
             </template>
 
             <template v-else-if="item.type && item.type.includes('radio')">
               <el-radio
                 v-for="option in item.options"
                 :key="option.value"
-                :label="option.value"
-              >
-                {{ option.label }}
-              </el-radio>
+                v-bind="option"
+              />
             </template>
           </component>
         </template>
