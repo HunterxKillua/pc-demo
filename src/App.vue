@@ -9,5 +9,5 @@ import Application from './components/common/Application'
 </template>
 
 <style lang="scss">
-@import './app.scss';
+@import "./app.scss";
 </style>

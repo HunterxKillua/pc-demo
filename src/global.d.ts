@@ -41,3 +41,25 @@ declare module 'vue-router' {
     [x: string]: any
   }
 }
+
+declare module 'vue-draggable-resizable' {
+  import type { DefineComponent } from 'vue'
+
+  const VueDraggableResizable: DefineComponent<{
+    x?: number
+    y?: number
+    w?: number
+    h?: number
+    grid?: [number, number]
+    axis?: 'x' | 'y' | 'both'
+    parent?: boolean
+    resizable?: boolean
+    draggable?: boolean
+    minWidth?: number
+    minHeight?: number
+    maxWidth?: number
+    maxHeight?: number
+  }, unknown, any>
+
+  export default VueDraggableResizable
+}

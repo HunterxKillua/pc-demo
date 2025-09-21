@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { RouteRecordRaw } from 'vue-router'
+import { ElSubMenu } from 'element-plus'
 import { getRouter } from '@/modules/router'
 import { type RenderMenuInterface, isHttpLink } from '@/utils'
 
@@ -46,25 +47,33 @@ onMounted(() => {
       logo
     </div>
     <div class="layout-side-menu">
-      <el-menu
+      <ElMenu
         :default-active="currRoute"
         class="el-menu-vertical-box"
         unique-opened
         :collapse="isCollapse"
       >
-        <el-sub-menu v-for="item of menus" :key="item.key" :index="item.key">
-          <template #title>
-            <component :is="item.icon" />
-            <span>{{ item.title }}</span>
-          </template>
-          <el-menu-item v-for="ele of item.children" :key="ele.key" :index="ele.key" @click="() => handleSelect(ele)">
+        <template v-for="item of menus" :key="item.key">
+          <ElMenuItem v-if="!item.children.length" :index="item.key" @click="() => handleSelect(item as RenderMenuInterface)">
             <template #title>
-              <component :is="ele.icon" />
-              <span>{{ ele.title }}</span>
+              <component :is="item.icon" />
+              <span>{{ item.title }}</span>
             </template>
-          </el-menu-item>
-        </el-sub-menu>
-      </el-menu>
+          </ElMenuItem>
+          <ElSubMenu v-else :index="item.key">
+            <template #title>
+              <component :is="item.icon" />
+              <span>{{ item.title }}</span>
+            </template>
+            <ElMenuItem v-for="ele of item.children" :key="ele.key" :index="ele.key" @click="() => handleSelect(ele)">
+              <template #title>
+                <component :is="ele.icon" />
+                <span>{{ ele.title }}</span>
+              </template>
+            </ElMenuItem>
+          </ElSubMenu>
+        </template>
+      </ElMenu>
     </div>
   </div>
 </template>

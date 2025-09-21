@@ -1,9 +1,9 @@
 import { createApp } from 'vue'
-import type { UserModule } from './types'
 import router from './router'
 import App from './App.vue'
 import 'virtual:uno.css'
 import './var.css'
+import type { UserModule } from './types'
 import { setupDirectives } from '@/directives'
 
 const app = createApp(App)
