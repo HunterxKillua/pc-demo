@@ -44,7 +44,7 @@ onMounted(() => {
 <template>
   <div class="layout-side">
     <div class="layout-side-logo">
-      logo
+      <div>HD智慧会议</div>
     </div>
     <div class="layout-side-menu">
       <ElMenu

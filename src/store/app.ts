@@ -20,12 +20,24 @@ export const useAppStore = defineStore('app', () => {
   }
   const getRenderMenu = (source: RenderMenuInterface[]) => {
     return source.reduce((prev: RenderMenuInterface[], menu: RenderMenuInterface) => {
-      if (menu?.isHidden) {
+      const { children = [], isHidden = false, ...conf } = menu
+      const bubbleChildren = children.filter(e => e.bubble)
+      if (menu.path === '/') {
+        prev.push(...getRenderMenu(children))
+      }
+      else if (isHidden) {
         return prev
       }
-      else if (menu.path === '/') {
-        const { children = [] } = menu
-        prev.push(...getRenderMenu(children))
+      else if (bubbleChildren.length) {
+        if (children.length !== bubbleChildren.length) {
+          const keys = bubbleChildren.map(item => item.key)
+          const filterChildren = children.filter(e => !keys.includes(e.key))
+          prev.push({
+            ...conf,
+            children: filterChildren,
+          })
+        }
+        prev.push(...getRenderMenu(bubbleChildren))
       }
       else {
         prev.push(menu)
@@ -40,7 +52,7 @@ export const useAppStore = defineStore('app', () => {
     if (!routes) {
       return []
     }
-    const source = routes.filter(item => !item.meta?.isHidden).map(item => getMenuItem(item)).sort((a, b) => b.order - a.order)
+    const source = routes.map(item => getMenuItem(item)).sort((a, b) => b.order - a.order)
     return getRenderMenu(source)
   }
   /**

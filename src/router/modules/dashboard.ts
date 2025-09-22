@@ -1,20 +1,22 @@
 import type { RouteRecordRaw } from 'vue-router'
+import { House } from '@element-plus/icons-vue'
 
 const routes: RouteRecordRaw[] = [
   {
     name: 'Dashboard',
     path: 'dashboard',
-    redirect: '/dashboard/workBench',
+    redirect: '/dashboard/home',
     component: () => import('~components/layout/index.vue'),
     children: [
       {
-        name: 'WorkBench',
-        path: 'workBench',
+        name: 'Home',
+        path: 'home',
         component: () => import('@/views/Dashboard/index.vue'),
         meta: {
-          title: '工作台',
-          authKey: 'menu:workBench',
-          isHidden: true,
+          title: '首页',
+          authKey: 'menu:hone',
+          icon: House,
+          order: 99,
         },
       },
     ],

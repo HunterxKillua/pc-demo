@@ -10,6 +10,7 @@ export interface RenderMenuInterface {
   icon?: () => VNode
   order: number
   isHidden?: boolean
+  bubble?: boolean
   children?: RenderMenuInterface[]
 }
 
@@ -45,13 +46,15 @@ export function resolvePath(basePath: string, path: string) {
 
   return `/${fullPath}`
 }
-export function getMenuItem(route: RouteRecordRaw, basePath: string = '') {
+export function getMenuItem(route: RouteRecordRaw, basePath: string = ''): RenderMenuInterface {
   const { meta } = route
   const menuItem: RenderMenuInterface = {
     title: meta?.title,
     key: route.name,
     path: resolvePath(basePath, route.path),
     icon: getIcon(meta?.icon),
+    isHidden: route.meta?.isHidden || false,
+    bubble: meta?.bubble || false,
     order: meta?.order || 0,
     children: [],
   }
@@ -93,6 +96,7 @@ export function getMenuItem(route: RouteRecordRaw, basePath: string = '') {
 
 /**
  * 根据条件查找并删除数组中的第一个匹配元素
+ * @param arr 需要被移除元素的数组
  * @param predicate - 判断函数，返回 true 表示匹配
  */
 export function removeBy<T>(

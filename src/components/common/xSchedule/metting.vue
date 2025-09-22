@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import FloatingResizer from './FloatingResizer.vue'
+import FloatingResizer from './floatResizer.vue'
 
 interface Booking { roomId: number, start: number, end: number, name: string }
 
@@ -243,7 +243,11 @@ onMounted(() => {
 
     <!-- 会议室列表 -->
     <div ref="roomScrollRef" class="room-col-scroll">
-      <div v-for="room in rooms" :key="room.id" class="room-col">
+      <div
+        v-for="room in rooms"
+        :key="room.id"
+        class="room-col"
+      >
         {{ room.name }}
       </div>
     </div>
@@ -264,6 +268,7 @@ onMounted(() => {
         <ElPopover
           placement="bottom"
         >
+          <div>123</div>
           <template #reference>
             <div>
               <FloatingResizer
@@ -281,9 +286,6 @@ onMounted(() => {
                 @resize-end="onExistingResizeEnd"
               />
             </div>
-          </template>
-          <template #default>
-            <div>123</div>
           </template>
         </ElPopover>
         <div
