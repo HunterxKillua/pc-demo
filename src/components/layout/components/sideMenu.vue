@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { RouteRecordRaw } from 'vue-router'
-import { ElSubMenu } from 'element-plus'
+import { ElPopover, ElSubMenu } from 'element-plus'
+import { Platform } from '@element-plus/icons-vue'
 import { getRouter } from '@/modules/router'
 import { type RenderMenuInterface, isHttpLink } from '@/utils'
 
@@ -44,6 +45,9 @@ onMounted(() => {
 <template>
   <div class="layout-side">
     <div class="layout-side-logo">
+      <ElIcon class="mr-[8px]">
+        <Platform />
+      </ElIcon>
       <div>HD智慧会议</div>
     </div>
     <div class="layout-side-menu">
@@ -54,11 +58,24 @@ onMounted(() => {
         :collapse="isCollapse"
       >
         <template v-for="item of menus" :key="item.key">
-          <ElMenuItem v-if="!item.children.length" :index="item.key" @click="() => handleSelect(item as RenderMenuInterface)">
-            <template #title>
-              <component :is="item.icon" />
+          <ElMenuItem
+            v-if="!item.children.length"
+            :index="item.key"
+            @click="() => handleSelect(item as RenderMenuInterface)"
+          >
+            <ElPopover
+              trigger="hover"
+              placement="right"
+              :disabled="!isCollapse"
+            >
+              <template #reference>
+                <div un-inline-block>
+                  <component :is="item.icon" />
+                  <span v-show="!isCollapse">{{ item.title }}</span>
+                </div>
+              </template>
               <span>{{ item.title }}</span>
-            </template>
+            </ElPopover>
           </ElMenuItem>
           <ElSubMenu v-else :index="item.key">
             <template #title>
@@ -86,6 +103,7 @@ onMounted(() => {
   &-logo {
     height: 50px;
     width: 100%;
+    @apply flex items-center justify-center;
   }
   &-menu {
     flex: 1;

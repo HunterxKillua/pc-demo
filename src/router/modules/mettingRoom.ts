@@ -12,6 +12,7 @@ const routes: RouteRecordRaw[] = [
     meta: {
       icon: Menu,
       title: '会议室管理',
+      order: 13,
     },
     children: [
       {

@@ -263,6 +263,7 @@ onMounted(() => {
         />
         <ElPopover
           placement="bottom"
+          trigger="hover"
         >
           <template #reference>
             <div>
@@ -282,9 +283,7 @@ onMounted(() => {
               />
             </div>
           </template>
-          <template #default>
-            <div>123</div>
-          </template>
+          <div>123</div>
         </ElPopover>
         <div
           v-for="ele of renderBookList(room.id)"

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ElBreadcrumb, ElBreadcrumbItem } from 'element-plus'
+import { Expand, Fold } from '@element-plus/icons-vue'
 
 const appStore = useAppStore()
 
@@ -32,8 +33,11 @@ const breadcrumbs = computed<{
 
 <template>
   <div class="layout-header">
-    <ElButton class="mr-8" @lick="toggleMenu">
-      {{ isCollapse ? '展开' : '收起' }}
+    <ElButton class="mr-8" @click="toggleMenu">
+      <ElIcon>
+        <Expand v-if="isCollapse" />
+        <Fold v-else />
+      </ElIcon>
     </ElButton>
     <ElBreadcrumb separator="/">
       <ElBreadcrumbItem
