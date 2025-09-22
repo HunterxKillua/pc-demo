@@ -20,6 +20,7 @@ export type ValidateFn = (
 ) => { start: number, end: number }
 
 export interface FloatResizerProps {
+  startTime: number // 起始时间
   start: number // 起始位置
   end: number // 结束为止
   total: number // 坐标总长度
@@ -34,6 +35,7 @@ export interface FloatResizerProps {
   id?: number | string // 当前操作的会议室id
   cellUnit?: number // 每个单元格代表的范围
   cellWidth?: number // 单元格的像素长度 单位px
+  roomName: string // 会议室名称
   popoverTrigger?: 'click' | 'hover' // 预约信息的弹出层触发方式
 }
 
@@ -46,4 +48,22 @@ export interface MettingProps {
   renderBooks: Booking[] // 已选择的会议室以及其标记区间段
   rooms: BookingRoom[] // 会议室列表
   popoverTrigger?: 'click' | 'hover'
+}
+
+export interface Org {
+  label: string
+  value: string
+  [x: string]: any
+}
+
+export interface TimeLineProps {
+  modelValue: string
+  orgList: Org[]
+  orgValue?: string
+}
+
+export interface FloatEventPrams {
+  roomName: string
+  timeStart: string
+  timeEnd: string
 }

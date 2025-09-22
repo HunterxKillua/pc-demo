@@ -2,12 +2,9 @@
 import { ElButton, ElDatePicker, ElOption, ElSelect } from 'element-plus'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
+import type { TimeLineProps } from '../../types/schedule'
 
-const props = withDefaults(defineProps<{
-  modelValue: string
-  orgList: Org[]
-  orgValue?: string
-}>(), {
+const props = withDefaults(defineProps<TimeLineProps>(), {
   modelValue: '',
   orgList: () => [],
   orgValue: '',
@@ -19,11 +16,6 @@ const emit = defineEmits<{
 }>()
 
 dayjs.locale('zh-cn')
-
-interface Org {
-  label: string
-  value: string
-}
 
 const selectedOrg = ref<string>(props.orgValue || '')
 
@@ -84,6 +76,7 @@ function getCurrentLabel(info: {
         type="date"
         placeholder="选择日期"
         value-format="YYYY-MM-DD"
+        @change="selectDate"
       />
       <ElSelect
         v-model="selectedOrg"

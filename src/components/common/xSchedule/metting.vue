@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Booking, BookingRoom, MettingProps } from '../../types/schedule'
+import type { Booking, BookingRoom, FloatEventPrams, MettingProps } from '../../types/schedule'
 import FloatingResizer from './floatResizer.vue'
 
 const props = withDefaults(defineProps<MettingProps>(), {
@@ -14,7 +14,7 @@ const props = withDefaults(defineProps<MettingProps>(), {
 })
 
 const emits = defineEmits<{
-  update: [value: Booking]
+  update: [value: Booking & FloatEventPrams]
 }>()
 
 const hoursCount = computed(() => {
@@ -98,9 +98,13 @@ function validateRangeForRoom(roomId: number | string) {
   }
 }
 
-function confirmFloating() {
+function confirmFloating(conf: {
+  roomName: string
+  timeStart: string
+  timeEnd: string
+}) {
   if (bookings.value) {
-    emits('update', unref(bookings.value))
+    emits('update', { ...unref(bookings.value), ...conf })
     nextTick(() => {
       bookings.value = null
     })
@@ -139,7 +143,14 @@ const renderBookList = computed(() => {
 })
 
 function onDetail(book: Booking) {
+  bookings.value = null
   console.log(book)
+}
+
+function onCancel() {
+  if (bookings.value) {
+    bookings.value = null
+  }
 }
 
 function getAvailableCell(
@@ -197,7 +208,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="scheduler">
+  <div class="scheduler" @click="onCancel">
     <!-- 左上角 -->
     <div class="corner">
       会议室
@@ -236,7 +247,7 @@ onMounted(() => {
           v-for="h in hoursCount"
           :key="`${room.id}-${h}-cell`"
           class="time-cell"
-          @click="onSelect(room, h)"
+          @click.stop="onSelect(room, h)"
         />
         <FloatingResizer
           v-if="bookings?.roomId === room.id"
@@ -245,6 +256,8 @@ onMounted(() => {
           :start="bookings.start"
           :end="bookings.end"
           :total="totalMinutes"
+          :room-name="room.name"
+          :start-time="startHour"
           :minutes-per-pixel="minutesPerPixel"
           :popover-trigger="popoverTrigger"
           :snap="snapMinutes"
@@ -252,6 +265,7 @@ onMounted(() => {
           :label="bookings.name"
           @resizing="onExistingResizing"
           @resize-end="onExistingResizeEnd"
+          @check="confirmFloating"
         />
         <div
           v-for="ele of renderBookList(room.id)"
@@ -261,16 +275,11 @@ onMounted(() => {
             left: ele.leftPercent,
             width: ele.widthPercent,
           }"
-          @click="onDetail(ele)"
+          @click.stop="onDetail(ele)"
         >
           {{ ele.name }}
         </div>
       </div>
-    </div>
-    <div class="controls">
-      <button @click="confirmFloating">
-        确认浮层
-      </button>
     </div>
   </div>
 </template>
@@ -381,13 +390,6 @@ $rowHeight: 60px;
     text-align: center;
     line-height: $rowHeight;
     background: rgba(0, 120, 255, 0.3)
-  }
-
-  .controls {
-    grid-column: span 2;
-    margin: 12px;
-    display: flex;
-    gap: 8px;
   }
 }
 </style>

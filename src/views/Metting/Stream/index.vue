@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import XSchedule from '~components/common/xSchedule/metting.vue'
-import TimeLine from '~components/common/xSchedule/timeLine.vue'
+import XSchedule from '~components/common/xSchedule/index.vue'
 import type { Booking, BookingRoom } from '~components/types/schedule'
 
 const rooms = ref<BookingRoom[]>([
@@ -27,34 +26,30 @@ const renderBooks = ref<Booking[]>([
     name: '卡卡罗特',
   },
 ])
-
-function onUpdateSchedule(conf: Booking) {
-  console.log(conf)
-}
-function onOrgChange(val: string) {
-  console.log(val)
-}
 const selectedDate = ref('2025-09-22')
-const orgOptions = [
+const orgValue = ref('')
+const cellSetting = reactive({
+  startHour: 7,
+  endHour: 24,
+})
+const orgOptions = ref([
   { label: '总部', value: 'hq' },
   { label: '分部1', value: 'b1' },
   { label: '分部2', value: 'b2' },
-]
+])
+function onUpdateSchedule(conf: Booking) {
+  console.log(conf, selectedDate.value, orgValue.value)
+}
 </script>
 
 <template>
-  <div class="common-page flex-v">
-    <TimeLine
-      v-model="selectedDate"
-      :org-list="orgOptions"
-      class="w-[100%] mb-[8px]"
-      @update:org="onOrgChange"
-    />
-    <XSchedule
-      :rooms="rooms"
-      :render-books="renderBooks"
-      class="flex-1 w-[100%]"
-      @update="onUpdateSchedule"
-    />
-  </div>
+  <XSchedule
+    v-model="selectedDate"
+    v-model:org-value="orgValue"
+    :rooms="rooms"
+    :org-list="orgOptions"
+    :render-books="renderBooks"
+    v-bind="cellSetting"
+    @confirm="onUpdateSchedule"
+  />
 </template>

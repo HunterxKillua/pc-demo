@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ElPopover } from 'element-plus'
-import type { FloatResizerProps } from '../../types/schedule'
+import type { FloatEventPrams, FloatResizerProps } from '../../types/schedule'
 /**
  * props
  * start/end: 单位分钟（相对于 timeline 起点）
@@ -18,12 +18,14 @@ const props = withDefaults(defineProps<FloatResizerProps>(), {
   cellWidth: 100, // 单元格宽度 用像素计算
   cellUnit: 60, // 单元格刻度 分钟
   popoverTrigger: 'hover',
+  roomName: '',
 })
 
 const emit = defineEmits<{
   (e: 'resizeStart'): void
   (e: 'resizing', l: number, m: number): void
   (e: 'resizeEnd', l: number, m: number): void
+  (e: 'check', val: FloatEventPrams): void
 }>()
 
 const localStart = ref(props.start)
@@ -134,6 +136,29 @@ function onDocMove(ev: MouseEvent) {
   emit('resizing', final.start, final.end)
 }
 
+function formatHour(hourDecimal: number) {
+  const h = Math.floor(hourDecimal)
+  const m = Math.round((hourDecimal - h) * 60)
+  return `${h}:${m.toString().padStart(2, '0')}`
+}
+
+const timeRange = computed(() => {
+  const start = (localStart.value / props.cellUnit) + props.startTime
+  const end = (localEnd.value / props.cellUnit) + props.startTime
+  return {
+    start: formatHour(start),
+    end: formatHour(end),
+  }
+})
+
+function onCheck() {
+  emit('check', {
+    roomName: props.roomName,
+    timeStart: timeRange.value.start,
+    timeEnd: timeRange.value.end,
+  })
+}
+
 function onDocUp() {
   if (!isResizing.value)
     return
@@ -195,8 +220,18 @@ onBeforeUnmount(() => {
       </div>
     </template>
     <template #default>
-      <div>
-        123456
+      <div class="box-border">
+        <div class="text-center font-600 leading-[32px]">
+          {{ roomName }}
+        </div>
+        <div class="text-center font-500 leading-[24px]">
+          {{ timeRange.start }}-{{ timeRange.end }}
+        </div>
+        <div class="flex items-center justify-center my-[8px]">
+          <ElButton type="primary" @click="onCheck">
+            预定
+          </ElButton>
+        </div>
       </div>
     </template>
   </ElPopover>
