@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { MenuTag } from '@/store/app'
+import { isHttpLink } from '@/utils'
 
 const appStore = useAppStore()
 const router = useRouter()
@@ -31,6 +32,10 @@ function handleClose(tag: MenuTag) {
 }
 
 function onClick(tag: MenuTag) {
+  if (isHttpLink(tag.path)) {
+    window.open(tag.path)
+    return
+  }
   if (tag.name !== route.name) {
     router.push({
       name: tag.name,
@@ -46,8 +51,10 @@ function onClick(tag: MenuTag) {
         v-for="tag in tags"
         :key="tag.name"
         closable
+        size="default"
         :disable-transitions="false"
         :type="activeTag === tag.name ? 'primary' : 'info'"
+        class="m-[8px]"
         @click="() => onClick(tag)"
         @close="handleClose(tag)"
       >
@@ -70,7 +77,11 @@ function onClick(tag: MenuTag) {
 .layout-view {
   @apply flex-1 w-[100%] flex flex-col items-center;
   &-tag {
-    @apply bg-white w-[100%] overflow-x-auto;
+    box-shadow:
+      0 4px 6px rgba(0, 0, 0, 0.06),
+      0 10px 20px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s ease;
+    @apply bg-white w-[100%] overflow-x-auto box-border;
   }
   &-body {
     @apply flex-1 w-[100%] box-border p-[20px];

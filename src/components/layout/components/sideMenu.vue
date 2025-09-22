@@ -99,15 +99,22 @@ onMounted(() => {
 .layout-side {
   height: 100%;
   background: #fff;
-  @apply flex flex-col items-center overflow-hidden box-border pr-[24px] pl-[12px];
+  border-right: 1px solid #ebeef5;
+  box-shadow:
+    4px 0 8px rgba(0, 0, 0, 0.08),
+    12px 0 20px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 0.2s ease;
+  @apply flex flex-col items-center overflow-hidden;
   &-logo {
     height: 50px;
     width: 100%;
-    @apply flex items-center justify-center;
+    border-bottom: 1px solid #ebeef5;
+    @apply flex items-center justify-center box-border pr-[24px] pl-[12px];
   }
   &-menu {
     flex: 1;
     overflow-y: auto;
+    @apply pr-[24px] pl-[12px];
   }
   .el-menu {
     border-right: none;

@@ -20,7 +20,7 @@ const props = withDefaults(defineProps<{
   floating?: boolean
   label?: string
   validate?: ValidateFn
-  id?: number
+  id: number
   cellUnit?: number
   cellWidth?: number
 }>(), {
@@ -53,12 +53,10 @@ const initialEnd = ref(0)
 watch(() => props.start, (v) => {
   if (!isResizing.value) {
     localStart.value = v
-    console.log(v)
   }
 })
 watch(() => props.end, (v) => {
   if (!isResizing.value) {
-    console.log(v)
     localEnd.value = v
   }
 })
@@ -166,44 +164,55 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div
-    class="fr-root"
-    :class="{ floating }"
-    :style="{
-      left: pct('left'),
-      width: pct('width'),
-    }"
-    @mousedown.stop.prevent
+  <ElPopover
+    placement="bottom"
+    trigger="hover"
+    :teleported="false"
   >
-    <div class="fr-content">
-      <slot>
-        <!-- 默认内容 -->
-        <div class="fr-label">
-          {{ label }}
+    <template #reference>
+      <div
+        class="fr-root"
+        :class="{ floating }"
+        :style="{
+          left: pct('left'),
+          width: pct('width'),
+        }"
+        @mousedown.stop.prevent
+      >
+        <div class="fr-content">
+          <slot>
+            <!-- 默认内容 -->
+            <div class="fr-label">
+              {{ label }}
+            </div>
+          </slot>
         </div>
-      </slot>
-    </div>
 
-    <!-- 左把手 -->
-    <div
-      class="fr-handle left"
-      role="slider"
-      aria-orientation="horizontal"
-      @mousedown.prevent="onHandleDown($event, 'left')"
-    >
-      <div class="fr-handle-dot" />
-    </div>
+        <!-- 左把手 -->
+        <div
+          class="fr-handle left"
+          role="slider"
+          aria-orientation="horizontal"
+          @mousedown.prevent="onHandleDown($event, 'left')"
+        >
+          <div class="fr-handle-dot" />
+        </div>
 
-    <!-- 右把手 -->
-    <div
-      class="fr-handle right"
-      role="slider"
-      aria-orientation="horizontal"
-      @mousedown.prevent="onHandleDown($event, 'right')"
-    >
-      <div class="fr-handle-dot" />
+        <!-- 右把手 -->
+        <div
+          class="fr-handle right"
+          role="slider"
+          aria-orientation="horizontal"
+          @mousedown.prevent="onHandleDown($event, 'right')"
+        >
+          <div class="fr-handle-dot" />
+        </div>
+      </div>
+    </template>
+    <div>
+      123
     </div>
-  </div>
+  </ElPopover>
 </template>
 
 <style scoped>

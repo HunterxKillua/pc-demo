@@ -5,7 +5,7 @@ import { Expand, Fold } from '@element-plus/icons-vue'
 const appStore = useAppStore()
 
 const { toggleMenu } = appStore
-const { isCollapse } = storeToRefs(appStore)
+const { isCollapse, tags } = storeToRefs(appStore)
 const route = useRoute()
 
 const breadcrumbs = computed<{
@@ -28,6 +28,11 @@ const breadcrumbs = computed<{
         disabled,
       }
     })
+})
+
+const boxShadowStyle = computed(() => {
+  const boxStyle = '0 4px 6px rgba(0, 0, 0, 0.06), 0 10px 20px rgba(0, 0, 0, 0.1)'
+  return tags.value.length ? 'none' : boxStyle
 })
 </script>
 
@@ -58,6 +63,8 @@ const breadcrumbs = computed<{
   width: 100%;
   height: 50px;
   background-color: #fff;
-  @apply flex items-center;
+  box-shadow:  v-bind(boxShadowStyle);
+  transition: box-shadow 0.2s ease;
+  @apply flex items-center px-[8px];
 }
 </style>

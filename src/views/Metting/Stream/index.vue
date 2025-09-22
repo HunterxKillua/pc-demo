@@ -261,30 +261,22 @@ onMounted(() => {
           class="time-cell"
           @click="onSelect(room, h)"
         />
-        <ElPopover
-          placement="bottom"
-          trigger="hover"
-        >
-          <template #reference>
-            <div>
-              <FloatingResizer
-                v-if="bookings?.roomId === room.id"
-                :id="bookings.roomId"
-                :key="bookings.roomId"
-                :start="bookings.start"
-                :end="bookings.end"
-                :total="totalMinutes"
-                :minutes-per-pixel="minutesPerPixel"
-                :snap="snapMinutes"
-                :validate="validateRangeForRoom(bookings.roomId)"
-                :label="`#${bookings.name}`"
-                @resizing="onExistingResizing"
-                @resize-end="onExistingResizeEnd"
-              />
-            </div>
-          </template>
-          <div>123</div>
-        </ElPopover>
+        <div v-if="bookings?.roomId === room.id">
+          <FloatingResizer
+            :id="bookings.roomId"
+            :key="bookings.roomId"
+            :start="bookings.start"
+            :end="bookings.end"
+            :total="totalMinutes"
+            :minutes-per-pixel="minutesPerPixel"
+            :snap="snapMinutes"
+            :validate="validateRangeForRoom(bookings.roomId)"
+            :label="`${bookings?.name}`"
+            @resizing="onExistingResizing"
+            @resize-end="onExistingResizeEnd"
+          />
+        </div>
+
         <div
           v-for="ele of renderBookList(room.id)"
           :key="`${ele.roomId}-book`"
