@@ -26,7 +26,7 @@ const renderBooks = ref<Booking[]>([
     name: '卡卡罗特',
   },
 ])
-const selectedDate = ref('2025-09-22')
+const selectedDate = ref('')
 const orgValue = ref('')
 const cellSetting = reactive({
   startHour: 7,
