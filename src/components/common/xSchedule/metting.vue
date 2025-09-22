@@ -1,57 +1,30 @@
 <script setup lang="ts">
+import type { Booking, BookingRoom, MettingProps } from '../../types/schedule'
 import FloatingResizer from './floatResizer.vue'
 
-interface Booking { roomId: number, start: number, end: number, name: string }
+const props = withDefaults(defineProps<MettingProps>(), {
+  startHour: 7,
+  endHour: 24,
+  snapMinutes: 30,
+  cellDuration: 60,
+  cellWidth: 100,
+  popoverTrigger: 'hover',
+  renderBooks: () => [],
+  rooms: () => [],
+})
 
-const rooms = Array.from({ length: 30 }, (_, i) => ({
-  id: i + 1,
-  name: `会议室${i + 1}`,
-}))
-const startHour = ref(7)
-const endHour = ref(24)
-const hoursCount = endHour.value - startHour.value
-const totalMinutes = hoursCount * 60
-const snapMinutes = 30
-const cellDuration = 60
-const cellWidth = 100
+const emits = defineEmits<{
+  update: [value: Booking]
+}>()
 
+const hoursCount = computed(() => {
+  return props.endHour - props.startHour
+})
+
+const totalMinutes = computed(() => {
+  return hoursCount.value * props.cellDuration
+})
 const bookings = ref<Booking | null>(null)
-
-const renderBooks = reactive<Booking[]>(
-  [
-    {
-      roomId: 2,
-      start: 150,
-      end: 210,
-      name: 'ts',
-    },
-    {
-      roomId: 2,
-      start: 240,
-      end: 420,
-      name: 'ts',
-    },
-    {
-      roomId: 2,
-      start: 30,
-      end: 60,
-      name: 'ts',
-    },
-    {
-      roomId: 2,
-      start: 900,
-      end: 960,
-      name: 'ts',
-    },
-    {
-      roomId: 1,
-      start: 150,
-      end: 270,
-      name: 'ts',
-    },
-  ],
-)
-
 const timelineRef = ref<HTMLElement | null>(null)
 const minutesPerPixel = ref(1) // px -> minutes
 
@@ -60,7 +33,7 @@ function computeMPP() {
   if (!timelineRef.value)
     return
   const w = Math.max(1, timelineRef.value.clientWidth)
-  minutesPerPixel.value = totalMinutes / w
+  minutesPerPixel.value = totalMinutes.value / w
 }
 let ro: ResizeObserver | null = null
 onMounted(() => {
@@ -79,16 +52,16 @@ onBeforeUnmount(() => {
     ro.unobserve(timelineRef.value)
 })
 
-function validateRangeForRoom(roomId: number) {
+function validateRangeForRoom(roomId: number | string) {
   return (candStart: number, candEnd: number, side?: 'left' | 'right') => {
-    let start = Math.max(0, Math.min(totalMinutes, candStart))
-    let end = Math.max(0, Math.min(totalMinutes, candEnd))
-    if (end - start < snapMinutes) {
+    let start = Math.max(0, Math.min(totalMinutes.value, candStart))
+    let end = Math.max(0, Math.min(totalMinutes.value, candEnd))
+    if (end - start < props.snapMinutes) {
       if (side === 'left')
-        start = Math.max(0, end - snapMinutes)
-      else end = Math.min(totalMinutes, start + snapMinutes)
+        start = Math.max(0, end - props.snapMinutes)
+      else end = Math.min(totalMinutes.value, start + props.snapMinutes)
     }
-    const others = renderBooks
+    const others = props.renderBooks
       .filter(b => b.roomId === roomId)
       .sort((a, b) => a.start - b.start)
     let minStart = 0
@@ -96,7 +69,7 @@ function validateRangeForRoom(roomId: number) {
       if (b.end <= start)
         minStart = Math.max(minStart, b.end)
     }
-    let maxEnd = totalMinutes
+    let maxEnd = totalMinutes.value
     for (const b of others) {
       if (b.start >= end) {
         maxEnd = Math.min(maxEnd, b.start)
@@ -113,13 +86,13 @@ function validateRangeForRoom(roomId: number) {
     }
     start = Math.max(start, minStart)
     end = Math.min(end, maxEnd)
-    if (end - start < snapMinutes) {
-      if (start + snapMinutes <= maxEnd)
-        end = start + snapMinutes
-      else start = Math.max(minStart, end - snapMinutes)
+    if (end - start < props.snapMinutes) {
+      if (start + props.snapMinutes <= maxEnd)
+        end = start + props.snapMinutes
+      else start = Math.max(minStart, end - props.snapMinutes)
     }
-    start = Math.round(start / snapMinutes) * snapMinutes
-    end = Math.round(end / snapMinutes) * snapMinutes
+    start = Math.round(start / props.snapMinutes) * props.snapMinutes
+    end = Math.round(end / props.snapMinutes) * props.snapMinutes
 
     return { start, end }
   }
@@ -127,15 +100,15 @@ function validateRangeForRoom(roomId: number) {
 
 function confirmFloating() {
   if (bookings.value) {
-    renderBooks.push(bookings.value)
+    emits('update', unref(bookings.value))
     nextTick(() => {
       bookings.value = null
     })
   }
 }
-function cancelFloating() {
-  bookings.value = null
-}
+// function cancelFloating() {
+//   bookings.value = null
+// }
 
 function onExistingResizing(start: number, end: number) {
   console.log(start, end)
@@ -152,10 +125,10 @@ const bodyScrollRef = ref<HTMLDivElement | null>(null)
 const roomScrollRef = ref<HTMLDivElement | null>(null)
 
 const renderBookList = computed(() => {
-  return (roomId: number) => {
-    return renderBooks.filter(item => item.roomId === roomId).map((b) => {
-      const leftPercent = cellWidth / cellDuration * b.start
-      const widthPercent = cellWidth / cellDuration * (b.end - b.start)
+  return (roomId: number | string) => {
+    return props.renderBooks.filter(item => item.roomId === roomId).map((b) => {
+      const leftPercent = props.cellWidth / props.cellDuration * b.start
+      const widthPercent = props.cellWidth / props.cellDuration * (b.end - b.start)
       return {
         ...b,
         leftPercent: `${leftPercent.toFixed(2)}px`,
@@ -170,18 +143,18 @@ function onDetail(book: Booking) {
 }
 
 function getAvailableCell(
-  roomId: number,
+  roomId: number | string,
   index: number,
 ): { start: number, end: number } {
   const currentItem = {
-    start: (index - 1) * cellDuration,
-    end: index * cellDuration,
+    start: (index - 1) * props.cellDuration,
+    end: index * props.cellDuration,
   }
-  const item = renderBooks.filter((b) => {
+  const item = props.renderBooks.filter((b) => {
     if (b.roomId !== roomId)
       return false
     const overlap = b.start < currentItem.end && b.end > currentItem.start
-    const misaligned = (b.start % cellDuration !== 0) || (b.end % cellDuration !== 0)
+    const misaligned = (b.start % props.cellDuration !== 0) || (b.end % props.cellDuration !== 0)
     return overlap && misaligned
   })
   if (item.length) {
@@ -198,7 +171,7 @@ function getAvailableCell(
   }
 }
 
-function onSelect(room: { id: number, name: string }, timeId: number) {
+function onSelect(room: BookingRoom, timeId: number) {
   if (timeId && room) {
     const { start, end } = getAvailableCell(room.id, timeId)
     bookings.value = {
@@ -265,29 +238,21 @@ onMounted(() => {
           class="time-cell"
           @click="onSelect(room, h)"
         />
-        <ElPopover
-          placement="bottom"
-        >
-          <div>123</div>
-          <template #reference>
-            <div>
-              <FloatingResizer
-                v-if="bookings?.roomId === room.id"
-                :id="bookings.roomId"
-                :key="bookings.roomId"
-                :start="bookings.start"
-                :end="bookings.end"
-                :total="totalMinutes"
-                :minutes-per-pixel="minutesPerPixel"
-                :snap="snapMinutes"
-                :validate="validateRangeForRoom(bookings.roomId)"
-                :label="`#${bookings.name}`"
-                @resizing="onExistingResizing"
-                @resize-end="onExistingResizeEnd"
-              />
-            </div>
-          </template>
-        </ElPopover>
+        <FloatingResizer
+          v-if="bookings?.roomId === room.id"
+          :id="bookings.roomId"
+          :key="bookings.roomId"
+          :start="bookings.start"
+          :end="bookings.end"
+          :total="totalMinutes"
+          :minutes-per-pixel="minutesPerPixel"
+          :popover-trigger="popoverTrigger"
+          :snap="snapMinutes"
+          :validate="validateRangeForRoom(bookings.roomId)"
+          :label="bookings.name"
+          @resizing="onExistingResizing"
+          @resize-end="onExistingResizeEnd"
+        />
         <div
           v-for="ele of renderBookList(room.id)"
           :key="`${ele.roomId}-book`"
@@ -306,9 +271,6 @@ onMounted(() => {
       <button @click="confirmFloating">
         确认浮层
       </button>
-      <button @click="cancelFloating">
-        取消浮层
-      </button>
     </div>
   </div>
 </template>
@@ -323,7 +285,7 @@ $rowHeight: 60px;
   grid-template-columns: $roomWidth 1fr;
   grid-template-rows: 40px 1fr;
   border: 1px solid #eee;
-  height: 500px;
+  height: 100%;
   overflow: hidden;
   font-size: 13px;
   user-select: none;

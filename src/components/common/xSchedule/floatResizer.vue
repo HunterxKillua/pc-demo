@@ -1,6 +1,6 @@
 <script setup lang="ts">
-type ValidateFn = (start: number, end: number, side?: 'left' | 'right', id?: number) => { start: number, end: number }
-
+import { ElPopover } from 'element-plus'
+import type { FloatResizerProps } from '../../types/schedule'
 /**
  * props
  * start/end: 单位分钟（相对于 timeline 起点）
@@ -8,35 +8,22 @@ type ValidateFn = (start: number, end: number, side?: 'left' | 'right', id?: num
  * minutesPerPixel: px -> 分钟 的系数（父组件计算并传入）
  * validate: 可选 - 父组件提供的校验/约束函数，返回被允许的 start/end
  */
-const props = withDefaults(defineProps<{
-  start: number
-  end: number
-  total: number
-  minutesPerPixel: number
-  snap?: number
-  min?: number
-  max?: number
-  disabled?: boolean
-  floating?: boolean
-  label?: string
-  validate?: ValidateFn
-  id?: number
-  cellUnit?: number
-  cellWidth?: number
-}>(), {
+const props = withDefaults(defineProps<FloatResizerProps>(), {
   snap: 30,
   min: 0,
   disabled: false,
   floating: false,
   label: '',
+  minutesPerPixel: 1,
   cellWidth: 100, // 单元格宽度 用像素计算
   cellUnit: 60, // 单元格刻度 分钟
+  popoverTrigger: 'hover',
 })
 
 const emit = defineEmits<{
   (e: 'resizeStart'): void
-  (e: 'resizing', s: number, e2: number): void
-  (e: 'resizeEnd', s: number, e2: number): void
+  (e: 'resizing', l: number, m: number): void
+  (e: 'resizeEnd', l: number, m: number): void
 }>()
 
 const localStart = ref(props.start)
@@ -166,44 +153,53 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div
-    class="fr-root"
-    :class="{ floating }"
-    :style="{
-      left: pct('left'),
-      width: pct('width'),
-    }"
-    @mousedown.stop.prevent
-  >
-    <div class="fr-content">
-      <slot>
-        <!-- 默认内容 -->
-        <div class="fr-label">
-          {{ label }}
+  <ElPopover placement="bottom" :trigger="popoverTrigger">
+    <template #reference>
+      <div
+        class="fr-root"
+        :class="{ floating }"
+        :style="{
+          left: pct('left'),
+          width: pct('width'),
+        }"
+        @mousedown.stop.prevent
+      >
+        <div class="fr-content">
+          <slot>
+            <!-- 默认内容 -->
+            <div class="fr-label">
+              {{ label }}
+            </div>
+          </slot>
         </div>
-      </slot>
-    </div>
 
-    <!-- 左把手 -->
-    <div
-      class="fr-handle left"
-      role="slider"
-      aria-orientation="horizontal"
-      @mousedown.prevent="onHandleDown($event, 'left')"
-    >
-      <div class="fr-handle-dot" />
-    </div>
+        <!-- 左把手 -->
+        <div
+          class="fr-handle left"
+          role="slider"
+          aria-orientation="horizontal"
+          @mousedown.prevent="onHandleDown($event, 'left')"
+        >
+          <div class="fr-handle-dot" />
+        </div>
 
-    <!-- 右把手 -->
-    <div
-      class="fr-handle right"
-      role="slider"
-      aria-orientation="horizontal"
-      @mousedown.prevent="onHandleDown($event, 'right')"
-    >
-      <div class="fr-handle-dot" />
-    </div>
-  </div>
+        <!-- 右把手 -->
+        <div
+          class="fr-handle right"
+          role="slider"
+          aria-orientation="horizontal"
+          @mousedown.prevent="onHandleDown($event, 'right')"
+        >
+          <div class="fr-handle-dot" />
+        </div>
+      </div>
+    </template>
+    <template #default>
+      <div>
+        123456
+      </div>
+    </template>
+  </ElPopover>
 </template>
 
 <style scoped>

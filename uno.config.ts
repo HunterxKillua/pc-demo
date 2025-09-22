@@ -25,7 +25,8 @@ export default defineConfig({
   ],
   shortcuts: [
     {
-      'btn-green': 'text-teal bg-green-500 hover:bg-green-700',
+      'common-page': 'bg-white h-[100%] rounded-[8px] p-[20px] box-border',
+      'flex-v': 'flex flex-col w-[100%] h-[100%] items-center',
     },
   ],
 })
