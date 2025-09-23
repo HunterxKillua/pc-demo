@@ -207,6 +207,9 @@ function clearValidate() {
 
 function onSlotChange(key: string, value: any) {
   formModel[key] = value
+  nextTick(() => {
+    validateByKey(key)
+  })
 }
 
 function validateByKey(key: string, callback?: (msg: boolean) => void) {
@@ -416,7 +419,6 @@ defineExpose({
   }
   .el-form {
     .el-form-item {
-      margin-bottom: 16px;
       display: inline-flex;
       &__label {
         margin-right: 16px !important;

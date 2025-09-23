@@ -1,5 +1,6 @@
 import path from 'node:path'
 import fs from 'node:fs'
+import process from 'node:process'
 import Vue from '@vitejs/plugin-vue'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
@@ -8,7 +9,7 @@ import UnoCSS from 'unocss/vite'
 import VueJsx from '@vitejs/plugin-vue-jsx'
 import VueMacros from 'unplugin-vue-macros/vite'
 import AutoImport from 'unplugin-auto-import/vite'
-import { type Plugin, defineConfig } from 'vite'
+import { type Plugin, defineConfig, loadEnv } from 'vite'
 
 // 在构建前清理 dist 目录 如果不清除dist在打包时会unocss扫描入口文件会报错
 function cleanDist(): Plugin {
@@ -24,9 +25,10 @@ function cleanDist(): Plugin {
   }
 }
 
-export default defineConfig(({ command }) => {
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd())
   return {
-    base: command === 'build' ? '/crm-manage' : '/',
+    base: '/',
     resolve: {
       alias: {
         '@/': `${path.resolve(__dirname, 'src')}/`,
@@ -42,6 +44,15 @@ export default defineConfig(({ command }) => {
       host: '0.0.0.0',
       strictPort: true,
       port: 8800,
+      proxy: {
+        '/api': {
+          target: env.VITE_BASE_URL,
+          changeOrigin: true,
+          rewrite: (path) => {
+            return path.replace(/^\/api/, '')
+          },
+        },
+      },
     },
     css: {
       preprocessorOptions: {

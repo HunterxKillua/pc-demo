@@ -14,7 +14,6 @@
     "moduleDetection": "force",
     "useDefineForClassFields": true,
     "experimentalDecorators": true,
-
     /* resolve assets */
     "baseUrl": ".",
     "module": "ESNext",
@@ -48,6 +47,7 @@
     },
     "resolveJsonModule": true,
     "types": [
+      "node",
       "element-plus/global",
       "vite/client",
       "unplugin-vue-macros/macros-global" /* ... */

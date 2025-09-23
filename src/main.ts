@@ -3,6 +3,7 @@ import router from './router'
 import App from './App.vue'
 import 'virtual:uno.css'
 import './var.css'
+import './app.css'
 import type { UserModule } from './types'
 import { setupDirectives } from '@/directives'
 

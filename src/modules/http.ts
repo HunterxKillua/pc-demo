@@ -17,10 +17,15 @@ export interface PendingTask {
   // reject: Function
 }
 
+export interface CommonResponse {
+  code: number
+  msg: string
+}
+
 let refreshing = false
 const queue: PendingTask[] = []
 // 如果需要开启代理则需要处理
-const baseURL = import.meta.env.VITE_ZUUL_API
+const baseURL = '/api'
 
 const RouterConfig: {
   router?: Router
@@ -30,7 +35,7 @@ export const install: UserModule = ({ router }) => {
   RouterConfig.router = router
 }
 // 暂时写在这里
-const whiteList: string[] = ['auth/auth/createHurricaneToken']
+const whiteList: string[] = []
 function needAuth(url: string) {
   return !whiteList.some(str => url.includes(str))
 }
@@ -57,17 +62,15 @@ export function httpRequest(config: ServerParams, extraOptions?: ServerExtraOpti
     headers: {
       'Accept': 'application/json;charset=UTF-8',
       'Content-Type': 'application/json;charset=UTF-8',
-      'App_id': import.meta.env.VITE_APP_ID,
-      'Systemcode': import.meta.env.VITE_SYSTEM_CODE,
     },
   })
   Server.interceptors.request.use(
     (config) => {
-      if (config.method === 'get')
+      if (config.method === 'get' && config.params)
         config.params._t = new Date().getTime()
       const token = localStorage.getItem('token')
       if (token && needAuth(config.url as string)) {
-        config.headers['Hurricane-Token'] = `Bearer ${token}`
+        // config.headers['Hurricane-Token'] = `Bearer ${token}`
       }
       return config
     },
@@ -80,8 +83,8 @@ export function httpRequest(config: ServerParams, extraOptions?: ServerExtraOpti
     (response) => {
       return new Promise((resolve, reject) => {
         const res = response?.data
-        if (Number(res.code) === 0) {
-          resolve(res.data)
+        if (Number(res.code) === 200) {
+          resolve(res)
         }
         else {
           if (extraOptions?.bubbleError) {
@@ -89,7 +92,7 @@ export function httpRequest(config: ServerParams, extraOptions?: ServerExtraOpti
           }
           else {
             ElMessage.error(res.msg || 'server error')
-            resolve(null as any)
+            resolve(res)
           }
         }
       })
@@ -136,7 +139,7 @@ export function httpRequest(config: ServerParams, extraOptions?: ServerExtraOpti
           console.log('刷新token失败, 登出处理', e)
         }
         ElMessage.error('登录过期')
-        RouterConfig?.router?.replace({ name: 'login' })
+        RouterConfig?.router?.replace({ name: 'Login' })
       }
       else {
         if (extraOptions?.bubbleError) {
@@ -167,12 +170,12 @@ export interface ReqReturn<T> {
 export async function reqCatch<T = Record<string, any>>(
   req: AxiosRequestConfig,
   extraOptions?: ServerExtraOption,
-): Promise<ReqReturn<T>> {
+): Promise<ReqReturn<T & CommonResponse>> {
   try {
-    const data = (await httpRequest(req, extraOptions)) as T
+    const data = (await httpRequest(req, extraOptions)) as unknown as (T & CommonResponse)
     return {
       data,
-      error: null,
+      error: Number(data?.code) === 200 ? null : data?.msg?.toString?.(),
     }
   }
   catch (e) {

@@ -147,12 +147,6 @@ function onDetail(book: Booking) {
   console.log(book)
 }
 
-function onCancel() {
-  if (bookings.value) {
-    bookings.value = null
-  }
-}
-
 function getAvailableCell(
   roomId: number | string,
   index: number,
@@ -208,7 +202,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="scheduler" @click="onCancel">
+  <div class="scheduler">
     <!-- 左上角 -->
     <div class="corner">
       会议室
