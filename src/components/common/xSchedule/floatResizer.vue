@@ -42,12 +42,10 @@ const initialEnd = ref(0)
 watch(() => props.start, (v) => {
   if (!isResizing.value) {
     localStart.value = v
-    console.log(v)
   }
 })
 watch(() => props.end, (v) => {
   if (!isResizing.value) {
-    console.log(v)
     localEnd.value = v
   }
 })

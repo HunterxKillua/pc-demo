@@ -1,9 +1,10 @@
 import type { XTableColumn, XTableExpose, XTablePager } from '~components/types/table'
 
 /**
+ * @param columnData 列表数据源
+ * @param fn 返回处理完的tableData方法
  * @param linkSearch 如果关联XSearch使用 则不触发WatchEffect的effect函数
  * @param externalParams 单独使用时的额外参数
- * @param fn 返回处理完的tableData方法
  */
 export function useTable(
   columnData: XTableColumn[],

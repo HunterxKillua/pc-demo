@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Booking, BookingRoom, FloatEventPrams, MettingProps } from '../../types/schedule'
+import type { Booking, BookingRoom, FloatEventPrams, MeetingProps } from '../../types/schedule'
 import FloatingResizer from './floatResizer.vue'
 
-const props = withDefaults(defineProps<MettingProps>(), {
+const props = withDefaults(defineProps<MeetingProps>(), {
   startHour: 7,
   endHour: 24,
   snapMinutes: 30,
@@ -110,12 +110,13 @@ function confirmFloating(conf: {
     })
   }
 }
-// function cancelFloating() {
-//   bookings.value = null
-// }
 
-function onExistingResizing(start: number, end: number) {
-  console.log(start, end)
+function cancelFloating() {
+  bookings.value = null
+}
+
+function onExistingResizing(_start: number, _end: number) {
+  // console.log(start, end)
 }
 function onExistingResizeEnd(start: number, end: number) {
   if (bookings.value) {
@@ -198,6 +199,10 @@ onMounted(() => {
     header.scrollLeft = body.scrollLeft
     room.scrollTop = body.scrollTop
   })
+})
+
+defineExpose({
+  cancelFloating,
 })
 </script>
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ElButton, ElDatePicker, ElOption, ElSelect } from 'element-plus'
+import { ElButton, ElDatePicker, ElTreeSelect } from 'element-plus'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
 
@@ -17,6 +17,8 @@ const emit = defineEmits<{
 }>()
 
 dayjs.locale('zh-cn')
+
+const TreeSelectRef = ref<typeof ElTreeSelect | null>(null)
 
 const selectedOrg = ref<string>(props.orgValue || '')
 
@@ -67,6 +69,19 @@ function getCurrentLabel(info: {
     return info.week
   }
 }
+
+function setOrgValue(val: string) {
+  selectedOrg.value = val
+}
+
+function setTimeValue(val: string) {
+  selectedDate.value = val
+}
+
+defineExpose({
+  setOrgValue,
+  setTimeValue,
+})
 </script>
 
 <template>
@@ -79,19 +94,25 @@ function getCurrentLabel(info: {
         value-format="YYYY-MM-DD"
         @change="selectDate"
       />
-      <ElSelect
+      <ElTreeSelect
+        ref="TreeSelectRef"
         v-model="selectedOrg"
-        placeholder="选择组织"
-        style="margin-left: 12px; width: 200px"
+        placeholder="选择区域"
+        :data="orgList"
+        node-key="id"
+        value-key="id"
+        highlight-current
+        check-strictly
+        :indent="24"
+        accordion
+        :props="{
+          label: 'label',
+          children: 'children',
+          disabled: 'disabled',
+        }"
+        style="margin-left: 12px; width: 240px"
         @change="onOrgChange"
-      >
-        <ElOption
-          v-for="org in props.orgList"
-          :key="org.value"
-          :label="org.label"
-          :value="org.value"
-        />
-      </ElSelect>
+      />
     </div>
 
     <div class="week-nav">

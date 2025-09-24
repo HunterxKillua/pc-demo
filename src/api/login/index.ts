@@ -1,13 +1,11 @@
+import type { LoginReqParams } from '../types/reqParam'
+import type { VerifyCodeReturn } from '../types/resReturn'
 import { reqCatch } from '@/modules/http'
 /**
  * @description 获取登录验证码
  */
 export function getLoginCode() {
-  return reqCatch<{
-    img: string
-    uuid: string
-    [x: string]: any
-  }>({
+  return reqCatch<VerifyCodeReturn>({
     method: 'get',
     url: '/captchaImage',
   })
@@ -15,13 +13,11 @@ export function getLoginCode() {
 /**
  * @description 登录
  */
-export function toLogin(data: {
-  code: string
-  password: string
-  username: string
-  uuid: string
-}) {
-  return reqCatch<Record<string, any>>({
+export function toLogin(data: LoginReqParams) {
+  return reqCatch<{
+    token: string
+    [x: string]: any
+  }>({
     method: 'post',
     url: '/login',
     data,

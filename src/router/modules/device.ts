@@ -1,5 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router'
 import { Document, Menu } from '@element-plus/icons-vue'
+import Layout from '~components/layout/index.vue'
 
 const basicName = 'Device'
 
@@ -7,8 +8,8 @@ const routes: RouteRecordRaw[] = [
   {
     path: 'device',
     name: '',
-    redirect: '/device/management',
-    component: () => import('~components/layout/index.vue'),
+    redirect: '/device/manage',
+    component: Layout,
     meta: {
       icon: Menu,
       title: '设备管理',
@@ -16,9 +17,9 @@ const routes: RouteRecordRaw[] = [
     },
     children: [
       {
-        name: 'Management',
-        path: 'management',
-        component: () => import('@/views/Device/Management/index.vue'),
+        name: 'Manage',
+        path: 'manage',
+        component: () => import('@/views/Device/Manage/index.vue'),
         meta: {
           icon: Document,
           order: 10,
@@ -27,7 +28,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         name: 'Template',
-        path: 'tempalte',
+        path: 'template',
         component: () => import('@/views/Device/Template/index.vue'),
         meta: {
           icon: Document,

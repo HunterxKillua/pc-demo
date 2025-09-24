@@ -9,6 +9,11 @@ export interface Booking {
 export interface BookingRoom {
   id: number | string
   name: string
+  capacity?: number
+  imgUrl?: string
+  qrCodeUrl?: string
+  enable?: boolean
+  tags?: Record<string, any>[]
   [x: string]: any
 }
 
@@ -39,7 +44,7 @@ export interface FloatResizerProps {
   popoverTrigger?: 'click' | 'hover' // 预约信息的弹出层触发方式
 }
 
-export interface MettingProps {
+export interface MeetingProps {
   startHour?: number // 坐标轴起始时间点
   endHour?: number // 坐标轴结束时间点
   snapMinutes?: number // 最小伸缩的分钟数
@@ -52,7 +57,10 @@ export interface MettingProps {
 
 export interface Org {
   label: string
-  value: string
+  value?: string
+  id?: string
+  disabled?: boolean
+  children?: Org[]
   [x: string]: any
 }
 

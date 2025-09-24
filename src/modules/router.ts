@@ -9,10 +9,22 @@ const RouterConfig: {
 /** 集成路由守卫 */
 export const install: UserModule = ({ app, router }) => {
   RouterConfig.router = router
-  router.beforeEach(() => {
+  router.beforeEach((to) => {
     NProgress.start()
+    if (localStorage.getItem('token')) {
+      return true
+    }
+    else {
+      if (to.name !== 'Login') {
+        return {
+          path: '/login',
+        }
+      }
+      return true
+    }
   })
-  router.afterEach(() => {
+  router.afterEach((to) => {
+    document.title = to.meta.title
     NProgress.done()
   })
   return app.use(router)

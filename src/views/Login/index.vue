@@ -2,7 +2,7 @@
 import Banner from '@/assets/login/login.svg'
 import XForm from '~components/common/xForm/index.vue'
 import type { XFormField } from '~components/types/form'
-import { getLoginCode, toLogin } from '@/api/login' // toLogin
+import { getLoginCode, toLogin } from '@/api'
 import { encrypt } from '@/utils'
 
 const fields: XFormField[] = [
@@ -30,6 +30,7 @@ const fields: XFormField[] = [
     defaultValue: '',
   },
 ]
+const router = useRouter()
 const code = ref('')
 const codeImagePath = ref('')
 const uuid = ref('')
@@ -41,9 +42,6 @@ async function getVerifyCode() {
   if (!error) {
     codeImagePath.value = `data:image/gif;base64, ${data?.img || ''}`
     uuid.value = data?.uuid || ''
-  }
-  else {
-    console.log(error)
   }
 }
 
@@ -61,7 +59,16 @@ const { formFields, FormInstance, onSubmit } = useForm(fields, async (conf) => {
       uuid: uuid.value,
     })
     if (!error) {
-      console.log(data)
+      localStorage.setItem('token', data?.token as string)
+      // todo: 加载用户信息存入store以及localStorage
+      router.replace({
+        path: sessionStorage.getItem('historyPath') || '/dashboard',
+      })
+    }
+    else {
+      if (error?.includes('验证码')) {
+        getVerifyCode()
+      }
     }
     setTimeout(() => {
       loading.value = false

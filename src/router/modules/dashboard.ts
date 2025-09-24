@@ -1,12 +1,13 @@
 import type { RouteRecordRaw } from 'vue-router'
 import { House } from '@element-plus/icons-vue'
+import Layout from '~components/layout/index.vue'
 
 const routes: RouteRecordRaw[] = [
   {
     name: 'Dashboard',
     path: 'dashboard',
     redirect: '/dashboard/home',
-    component: () => import('~components/layout/index.vue'),
+    component: Layout,
     children: [
       {
         name: 'Home',

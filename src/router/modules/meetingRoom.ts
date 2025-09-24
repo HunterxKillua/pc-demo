@@ -1,14 +1,15 @@
 import type { RouteRecordRaw } from 'vue-router'
 import { Document, Menu } from '@element-plus/icons-vue'
+import Layout from '~components/layout/index.vue'
 
-const basicName = 'MettingRoom'
+const basicName = 'MeetingRoom'
 
 const routes: RouteRecordRaw[] = [
   {
-    path: 'mettingRoom',
+    path: 'meetingRoom',
     name: '',
-    redirect: '/mettingRoom/info',
-    component: () => import('~components/layout/index.vue'),
+    redirect: '/meetingRoom/info',
+    component: Layout,
     meta: {
       icon: Menu,
       title: '会议室管理',
@@ -18,7 +19,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'Info',
         path: 'info',
-        component: () => import('@/views/MettingRoom/Info/index.vue'),
+        component: () => import('@/views/MeetingRoom/Info/index.vue'),
         meta: {
           icon: Document,
           order: 13,
@@ -28,7 +29,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'Rule',
         path: 'rule',
-        component: () => import('@/views/MettingRoom/Rule/index.vue'),
+        component: () => import('@/views/MeetingRoom/Rule/index.vue'),
         meta: {
           icon: Document,
           order: 12,
@@ -38,7 +39,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'Setting',
         path: 'setting',
-        component: () => import('@/views/MettingRoom/Setting/index.vue'),
+        component: () => import('@/views/MeetingRoom/Setting/index.vue'),
         meta: {
           icon: Document,
           order: 11,

@@ -1,12 +1,13 @@
 import type { RouteRecordRaw } from 'vue-router'
 import { Document, Menu, Setting } from '@element-plus/icons-vue'
+import Layout from '~components/layout/index.vue'
 
 const routes: RouteRecordRaw[] = [
   {
     path: 'user',
     name: 'User',
     redirect: '/user/list',
-    component: () => import('~components/layout/index.vue'),
+    component: Layout,
     meta: {
       icon: Menu,
       title: '用户管理',

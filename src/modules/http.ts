@@ -22,8 +22,6 @@ export interface CommonResponse {
   msg: string
 }
 
-let refreshing = false
-const queue: PendingTask[] = []
 // 如果需要开启代理则需要处理
 const baseURL = '/api'
 
@@ -34,25 +32,9 @@ const RouterConfig: {
 export const install: UserModule = ({ router }) => {
   RouterConfig.router = router
 }
-// 暂时写在这里
-const whiteList: string[] = []
+const whiteList: string[] = ['/captchaImage', '/login']
 function needAuth(url: string) {
   return !whiteList.some(str => url.includes(str))
-}
-
-async function refreshToken() {
-  return axios.request({
-    url: `${baseURL}${import.meta.env.VITE_PASSPORT_PREFIX || ''}` + `/api/v1/user/token/refresh`,
-    method: 'post',
-    data: {
-      refresh_token: localStorage.getItem('refresh_token'),
-    },
-    headers: {
-      'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-      'content-type': 'application/x-www-form-urlencoded',
-    },
-    withCredentials: true,
-  })
 }
 
 export function httpRequest(config: ServerParams, extraOptions?: ServerExtraOption) {
@@ -70,7 +52,7 @@ export function httpRequest(config: ServerParams, extraOptions?: ServerExtraOpti
         config.params._t = new Date().getTime()
       const token = localStorage.getItem('token')
       if (token && needAuth(config.url as string)) {
-        // config.headers['Hurricane-Token'] = `Bearer ${token}`
+        config.headers.Authorization = `Bearer ${token}`
       }
       return config
     },
@@ -98,46 +80,12 @@ export function httpRequest(config: ServerParams, extraOptions?: ServerExtraOpti
       })
     },
     async (error) => {
-      const { status, message, data, config } = error.response
-      if (refreshing) {
-        return new Promise((resolve) => {
-          queue.unshift({
-            config,
-            resolve,
-          })
-        })
-      }
+      const { status, message, data } = error.response
       if (status === 500) {
         ElMessage.error('server error')
         return undefined
       }
       else if (status === 401) {
-        refreshing = true
-        try {
-          const res = await refreshToken()
-          refreshing = false
-          if (res.status === 200) {
-            const { access_token, refresh_token } = res.data
-            localStorage.setItem('access_token', access_token)
-            localStorage.setItem('refresh_token', refresh_token)
-            queue.forEach(({ config, resolve }) => {
-              if (config.headers) {
-                config.headers.Authorization = `Bearer ${access_token}`
-              }
-              resolve(axios(config))
-            })
-            queue.splice(0)
-            config.headers.Authorization = `Bearer ${access_token}`
-            return axios(config)
-          }
-          else {
-            console.log('刷新token失败, 登出处理')
-            return Promise.reject(res.data)
-          }
-        }
-        catch (e) {
-          console.log('刷新token失败, 登出处理', e)
-        }
         ElMessage.error('登录过期')
         RouterConfig?.router?.replace({ name: 'Login' })
       }

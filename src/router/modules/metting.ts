@@ -1,13 +1,14 @@
 import type { RouteRecordRaw } from 'vue-router'
 import { Document, Menu } from '@element-plus/icons-vue'
+import Layout from '~components/layout/index.vue'
 
-const basicName = 'Metting'
+const basicName = 'Meeting'
 const routes: RouteRecordRaw[] = [
   {
-    path: 'metting',
+    path: 'meeting',
     name: '',
-    redirect: '/metting/preview',
-    component: () => import('~components/layout/index.vue'),
+    redirect: '/meeting/preview',
+    component: Layout,
     meta: {
       icon: Menu,
       title: '会议管理',
@@ -17,7 +18,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'Preview',
         path: 'preview',
-        component: () => import('@/views/Metting/Stream/index.vue'),
+        component: () => import('@/views/Meeting/Stream/index.vue'),
         meta: {
           icon: Document,
           order: 16,
@@ -28,7 +29,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: `Schedule`,
         path: 'schedule',
-        component: () => import('@/views/Metting/Schedule/index.vue'),
+        component: () => import('@/views/Meeting/Schedule/index.vue'),
         meta: {
           icon: Document,
           order: 15,
@@ -39,7 +40,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'Record',
         path: 'record',
-        component: () => import('@/views/Metting/Record/index.vue'),
+        component: () => import('@/views/Meeting/Record/index.vue'),
         meta: {
           icon: Document,
           order: 14,
@@ -50,7 +51,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'Management',
         path: 'management',
-        component: () => import('@/views/Metting/Manage/index.vue'),
+        component: () => import('@/views/Meeting/Manage/index.vue'),
         meta: {
           icon: Document,
           order: 13,
@@ -61,7 +62,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'Statistics',
         path: 'statistics',
-        component: () => import('@/views/Metting/Statistics/index.vue'),
+        component: () => import('@/views/Meeting/Statistics/index.vue'),
         meta: {
           icon: Document,
           order: 12,
