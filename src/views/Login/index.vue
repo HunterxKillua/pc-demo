@@ -102,6 +102,7 @@ const { formFields, FormInstance, onSubmit } = useForm(fields, async (conf) => {
                 @change="updateKey"
               />
               <img
+                v-if="codeImagePath"
                 :src="codeImagePath"
                 class="h-[40px] w-[120px] ml-[12px]"
                 alt="code"

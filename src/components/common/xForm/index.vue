@@ -274,6 +274,7 @@ function modifyFormData(data: Record<string, any>) {
   for (const key in data) {
     formModel[key] = data[key]
   }
+  console.log(formModel)
 }
 
 function handleTrim(prop: string) {

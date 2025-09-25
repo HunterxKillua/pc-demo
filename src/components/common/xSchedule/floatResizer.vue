@@ -135,9 +135,14 @@ function onDocMove(ev: MouseEvent) {
 }
 
 function formatHour(hourDecimal: number) {
-  const h = Math.floor(hourDecimal)
-  const m = Math.round((hourDecimal - h) * 60)
-  return `${h}:${m.toString().padStart(2, '0')}`
+  const totalMinutes = Math.round(hourDecimal * 60)
+  const hours = Math.floor(totalMinutes / 60)
+  const minutes = totalMinutes % 60
+
+  const formattedHours = hours.toString().padStart(2, '0')
+  const formattedMinutes = minutes.toString().padStart(2, '0')
+
+  return `${formattedHours}:${formattedMinutes}`
 }
 
 const timeRange = computed(() => {

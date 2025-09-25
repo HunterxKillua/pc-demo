@@ -53,6 +53,7 @@ export interface MeetingProps {
   renderBooks: Booking[] // 已选择的会议室以及其标记区间段
   rooms: BookingRoom[] // 会议室列表
   popoverTrigger?: 'click' | 'hover'
+  isCollect?: boolean // 会议室是否被收藏
 }
 
 export interface Org {

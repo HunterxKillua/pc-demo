@@ -50,3 +50,26 @@ export function getUsedMeeting(data: QueryMeetingParams) {
     data,
   })
 }
+/**
+ * @description 查询人员
+ */
+export function getUserByUserName(params: { userName: string }) {
+  return reqCatch<{
+    total: number
+    rows: []
+  }>({
+    url: '/system/user/getMeetingUser',
+    method: 'get',
+    params,
+  })
+}
+/**
+ * @description 预定会议
+ */
+export function createMeetingBook(data: Record<string, any>) {
+  return reqCatch({
+    url: '/meeting/reserve',
+    method: 'post',
+    data,
+  })
+}

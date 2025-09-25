@@ -12,6 +12,7 @@ const props = withDefaults(defineProps<MeetingProps & TimeLineProps>(), {
   startHour: 7,
   endHour: 24,
   availableDays: 7,
+  isCollect: false,
 })
 
 const emit = defineEmits<{

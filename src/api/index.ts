@@ -1,4 +1,5 @@
 export * from './login'
 export * from './meeting'
+export * from './user'
 export type * from './types/reqParam'
 export type * from './types/resReturn'

@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { Connection } from '@element-plus/icons-vue'
 import type { Booking, BookingRoom, FloatEventPrams, MeetingProps } from '../../types/schedule'
+import Star from '../../atoms/Fallback/star.vue'
 import FloatingResizer from './floatResizer.vue'
 
 const props = withDefaults(defineProps<MeetingProps>(), {
@@ -11,6 +13,7 @@ const props = withDefaults(defineProps<MeetingProps>(), {
   popoverTrigger: 'hover',
   renderBooks: () => [],
   rooms: () => [],
+  isCollect: false,
 })
 
 const emits = defineEmits<{
@@ -231,7 +234,35 @@ defineExpose({
         :key="room.id"
         class="room-col"
       >
-        {{ room.name }}
+        <div class="flex items-center justify-between w-[100%] mb-1">
+          <div v-ellipsis class="flex-1 mr-[12px] text-[13px]">
+            {{ room.name }}
+          </div>
+          <ElPopover
+            trigger="click"
+            placement="right"
+            width="360"
+          >
+            <template #reference>
+              <ElIcon size="16">
+                <Connection />
+              </ElIcon>
+            </template>
+            <template #default>
+              <div class="w-[100%] box-border p-[12px]">
+                <div class="flex items-center justify-center">
+                  <div class="flex-1 text-[16px] font-600 mr-[24px]">
+                    {{ room.name }}
+                  </div>
+                  <Star />
+                </div>
+              </div>
+            </template>
+          </ElPopover>
+        </div>
+        <div class="text-[12px] text-[#999]">
+          {{ room?.capacity }}人
+        </div>
       </div>
     </div>
 
@@ -359,11 +390,10 @@ $rowHeight: 60px;
 
   .room-col {
     height: $rowHeight;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     border-bottom: 1px solid #f5f5f5;
     background: #fff;
+    box-sizing: border-box;
+    padding: 12px 12px 8px 20px;
   }
 
   .timeline-row {

@@ -6,6 +6,7 @@ import { getAreaTree, getMeetingRoomConfig, getMeetingRoomList, getUsedMeeting }
 import type { QueryMeetingParams } from '@/api'
 import { calculateTimeCoordinates, convertTimeToInteger } from '@/utils'
 
+const router = useRouter()
 const ScheduleRef = ref<typeof XSchedule | null>(null)
 const rooms = ref<BookingRoom[]>([])
 const renderBooks = ref<Booking[]>([])
@@ -127,7 +128,14 @@ async function getRenderBooks(params: QueryMeetingParams) {
   }
 }
 function onUpdateSchedule(conf: Booking) {
-  console.log(conf, selectedDate.value, orgValue.value)
+  router.push({
+    path: '/meeting/book',
+    query: {
+      ...conf,
+      date: selectedDate.value,
+      org: orgValue.value,
+    },
+  })
 }
 async function init() {
   getConfig()
