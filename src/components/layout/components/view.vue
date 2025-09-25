@@ -75,16 +75,18 @@ function onClick(tag: MenuTag) {
 
 <style lang="scss" scoped>
 .layout-view {
-  @apply flex-1 w-[100%] flex flex-col items-center;
+  @apply flex-1 w-[100%] flex flex-col items-center overflow-hidden;
   &-tag {
     box-shadow:
       0 4px 6px rgba(0, 0, 0, 0.06),
       0 10px 20px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.2s ease;
-    @apply bg-white w-[100%] overflow-x-auto box-border;
+    z-index: 99;
+    @apply bg-white w-[100%] overflow-x-auto box-border whitespace-nowrap;
   }
   &-body {
-    @apply flex-1 w-[100%] box-border p-[20px];
+    z-index: 10;
+    @apply flex-1 w-[100%] box-border p-[20px] overflow-y-auto;
   }
 }
 </style>

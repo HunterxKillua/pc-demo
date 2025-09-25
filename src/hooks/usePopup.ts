@@ -44,6 +44,7 @@ export function usePopup(className?: string, rootElement?: HTMLElement) {
       firstClassName = cacheClass.split(' ')[0]
     }
     const el = root.querySelector(`.${firstClassName}`)
+    console.log(el)
     if (el) {
       root.removeChild(el)
     };

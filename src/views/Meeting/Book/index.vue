@@ -19,9 +19,8 @@ onMounted(() => {
     timeStart: query.timeStart,
     timeEnd: query.timeEnd,
     notificationFlag: query.notificationFlag || '1',
-    time: `${query.date} ${query.timeStart}-${query.date} ${query.timeEnd}`,
+    time: query.date ? `${query.date} ${query.timeStart}-${query.date} ${query.timeEnd}` : '',
   }
-  console.log(query)
   nextTick(() => {
     if (BookBasicRef.value) {
       BookBasicRef.value.initData(unref(basicData.value))
@@ -31,7 +30,6 @@ onMounted(() => {
 
 async function onClick() {
   const conf = await BookBasicRef.value?.exposeData()
-  console.log(basicData.value)
   if (conf) {
     const { error, data } = await createMeetingBook({
       attendeeIds: [1928, 1883],
@@ -57,13 +55,10 @@ async function onClick() {
       <BookBasicForm
         ref="BookBasicRef"
         v-bind="basicData"
-        style="width: 70%;"
       />
     </div>
     <div class="form-box">
-      <BookUserForm
-        style="width: 70%;"
-      />
+      <BookUserForm />
     </div>
     <div class="flex justify-end">
       <ElButton type="primary" @click="onClick">

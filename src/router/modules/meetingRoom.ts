@@ -1,10 +1,9 @@
 import type { RouteRecordRaw } from 'vue-router'
 import { Document, Menu } from '@element-plus/icons-vue'
 import Layout from '~components/layout/index.vue'
+import { addNamePrefix } from '@/utils'
 
-const basicName = 'MeetingRoom'
-
-const routes: RouteRecordRaw[] = [
+const routes: RouteRecordRaw[] = addNamePrefix([
   {
     path: 'meetingRoom',
     name: '',
@@ -48,13 +47,7 @@ const routes: RouteRecordRaw[] = [
       },
     ],
   },
-].map((item) => {
-  const { name, ...conf } = item
-  return {
-    ...conf,
-    name: `${basicName}${name}`,
-  }
-})
+], 'MeetingRoom')
 
 export { routes }
 export default routes

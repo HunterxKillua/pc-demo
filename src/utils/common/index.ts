@@ -139,3 +139,16 @@ export function injectRouteComponentName(routes: RouteRecordRaw[]): RouteRecordR
     return route
   })
 }
+
+export function addNamePrefix(routes: RouteRecordRaw[], prefix: string): RouteRecordRaw[] {
+  return routes.map((route) => {
+    const newRoute: RouteRecordRaw = {
+      ...route,
+      name: route.name ? `${prefix}${route.name as string}` : prefix,
+    }
+    if (route.children && route.children.length > 0) {
+      newRoute.children = addNamePrefix(route.children, prefix)
+    }
+    return newRoute
+  })
+}

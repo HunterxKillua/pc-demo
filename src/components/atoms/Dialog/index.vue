@@ -29,7 +29,7 @@ const props = withDefaults(defineProps<Props>(), {
   cancelLoading: false,
   confirmLoading: false,
   autoLoading: false,
-  appendToBody: true,
+  appendToBody: false,
 })
 
 const emit = defineEmits<{
@@ -66,7 +66,6 @@ async function onSubmit() {
     submitLoading.value = true
   }
   emit('confirm')
-
   setTimeout(() => {
     submitLoading.value = false
   }, 1500)
@@ -91,17 +90,13 @@ async function onSubmit() {
         </div>
       </slot>
     </template>
-    <div>
-      <slot />
-    </div>
-
+    <slot />
     <template #footer>
       <slot name="footer">
         <ElButton
           v-if="showCancel"
           :loading="cancelLoading"
-          class="mr12"
-          :style="{ minWidth: '110px' }"
+          class="mr-[12px]"
           @click="onCancel"
         >
           {{ cancelText }}
