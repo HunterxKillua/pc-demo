@@ -16,7 +16,6 @@ export function decrypt(txt: string) {
  * 解析时间范围字符串并计算坐标
  * @param timeRange 时间范围字符串，格式如"202509240908-202509240915"
  * @param startScale 起始刻度，默认为"00:00"
- * @param cellWidth 每个单元格的宽度，默认为60
  * @returns 包含start和end坐标的对象
  * @throws 如果时间格式不正确则抛出错误
  */

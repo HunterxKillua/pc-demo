@@ -11,6 +11,7 @@ const props = withDefaults(defineProps<MeetingProps & TimeLineProps>(), {
   orgValue: '',
   startHour: 7,
   endHour: 24,
+  availableDays: 7,
 })
 
 const emit = defineEmits<{
@@ -62,6 +63,7 @@ defineExpose({
       v-model="selectedDate"
       v-model:org-value="selectedOrg"
       :org-list="orgList"
+      :available-days="availableDays"
       class="w-[100%] mb-[8px]"
     />
     <XSchedule

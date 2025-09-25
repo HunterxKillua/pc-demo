@@ -9,6 +9,7 @@ const props = withDefaults(defineProps<TimeLineProps>(), {
   modelValue: '',
   orgList: () => [],
   orgValue: '',
+  availableDays: 7,
 })
 
 const emit = defineEmits<{
@@ -37,9 +38,18 @@ const weekDays = computed(() => {
   })
 })
 
+function setDateRange(time: Date) {
+  const today = dayjs().startOf('day')
+  const timeDayjs = dayjs(time).startOf('day')
+  const maxDate = today.add(props.availableDays, 'day')
+  return timeDayjs.isBefore(today) || timeDayjs.isAfter(maxDate)
+}
+
 function selectDate(date: string) {
-  selectedDate.value = date
-  emit('update:modelValue', date)
+  if (getDateStatus(date)) {
+    selectedDate.value = date
+    emit('update:modelValue', date)
+  }
 }
 
 function prevWeek() {
@@ -78,6 +88,21 @@ function setTimeValue(val: string) {
   selectedDate.value = val
 }
 
+function getDateStatus(date: string) {
+  const targetDate = dayjs(date, 'YYYY-MM-DD', true)
+
+  // 计算日期边界
+  const today = dayjs().startOf('day')
+  const endOfRange = today.add(Number(props.availableDays), 'day').endOf('day')
+
+  // 转换为时间戳进行比较
+  const todayTime = today.valueOf()
+  const targetTime = targetDate.startOf('day').valueOf()
+  const endTime = endOfRange.valueOf()
+
+  return targetTime >= todayTime && targetTime <= endTime
+}
+
 defineExpose({
   setOrgValue,
   setTimeValue,
@@ -92,6 +117,7 @@ defineExpose({
         type="date"
         placeholder="选择日期"
         value-format="YYYY-MM-DD"
+        :disabled-date="setDateRange"
         @change="selectDate"
       />
       <ElTreeSelect
@@ -124,7 +150,7 @@ defineExpose({
           v-for="d in weekDays"
           :key="d.date"
           class="day-item"
-          :class="{ active: d.date === selectedDate }"
+          :class="{ active: d.date === selectedDate, disabled: !getDateStatus(d.date) }"
           @click="selectDate(d.date)"
         >
           <div class="week">
@@ -173,7 +199,6 @@ defineExpose({
         padding: 6px 10px;
         border-radius: 6px;
         transition: all 0.2s ease;
-
         .date {
           font-weight: 500;
         }
@@ -181,7 +206,6 @@ defineExpose({
           font-size: 12px;
           color: #888;
         }
-
         &:hover {
           background: #f0f2f5;
         }
@@ -191,6 +215,10 @@ defineExpose({
           .week {
             color: #fff;
           }
+        }
+        &.disabled {
+          background: #f0f2f5;
+          cursor: not-allowed;
         }
       }
     }

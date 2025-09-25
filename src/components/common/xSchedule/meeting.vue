@@ -269,6 +269,7 @@ defineExpose({
         <div
           v-for="ele of renderBookList(room.id)"
           :key="`${ele.roomId}-book`"
+          v-ellipsis
           class="render-cell"
           :style="{
             left: ele.leftPercent,

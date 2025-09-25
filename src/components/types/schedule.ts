@@ -67,6 +67,7 @@ export interface Org {
 export interface TimeLineProps {
   modelValue: string
   orgList: Org[]
+  availableDays?: number
   orgValue?: string
 }
 

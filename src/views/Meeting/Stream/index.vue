@@ -15,6 +15,7 @@ const cellSetting = reactive({
   startHour: 7,
   endHour: 24,
   snapMinutes: 30,
+  availableDays: 7,
 })
 const orgOptions = ref<Org[]>([])
 async function getRooms() {
@@ -86,6 +87,7 @@ async function getConfig() {
       cellSetting.startHour = convertTimeToInteger(source?.startTime)
       cellSetting.endHour = convertTimeToInteger(source?.endTime)
       cellSetting.snapMinutes = Number(source?.interval)
+      cellSetting.availableDays = Number(source?.period)
     }
   }
 }
