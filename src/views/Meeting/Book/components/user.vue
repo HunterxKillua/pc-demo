@@ -1,57 +1,81 @@
 <script lang="ts" setup>
 import { userForm } from '../form'
+import PopupSelect from './popupSelect.vue'
 import XForm from '~components/common/xForm/index.vue'
 import LoadSelect from '~components/atoms/Select/scrollLoad.vue'
 import SelectUser from '~components/atoms/Select/user.vue'
+import { getMeetingUser } from '@/api'
 
 async function fetchUsers(query: string, pager: {
   pageSize: number
   pageNum: number
-}): Promise<{ [x: string]: any, label: string, value: string }[]> {
-  await new Promise(r => setTimeout(r, 500)) // 模拟延迟
-  return Array.from({ length: 10 }).map((_, i) => ({
-    label: `${query || '用户'}-${pager.pageNum}-${i}`,
-    value: `${pager.pageNum}-${i}`,
-  }))
+}): Promise<{
+    total: number
+    rows: Record<string, any>[]
+  }> {
+  const { data, error } = await getMeetingUser({
+    nickName: query,
+    ...pager,
+  })
+  if (!error) {
+    if (data) {
+      const { total, rows } = data
+      return {
+        total,
+        rows: rows.map((item) => {
+          const { nickName, userId, ...conf } = item
+          return {
+            label: nickName,
+            value: userId.toString(),
+            ...conf,
+          }
+        }),
+      }
+    }
+  }
+  return {
+    total: 100,
+    rows: Array.from({ length: 10 }, (_, index) => {
+      return {
+        label: `测试字段${pager.pageNum}${index}`,
+        value: pager.pageNum + index,
+      }
+    }),
+  }
 }
-const ButtonRef = ref<typeof ElButton | null>(null)
-const { mount, unMount } = usePopup()
 
+const { mount, unMount } = usePopup()
+const SelectRef = ref<typeof PopupSelect | null>(null)
 const recorderId = ref<string>('')
 const hostId = ref<string>('')
 const attendeeIds = ref<{
   label: string
   value: string
-}[]>([
-  {
-    label: '1111',
-    value: '2222',
-  },
-  {
-    label: '1111',
-    value: '3333',
-  },
-])
+}[]>([])
 function onChoose() {
   mount(() => import('@/components/atoms/Dialog/index.vue'), {
+    title: '选择会议人员',
     modelValue: true,
-    title: '弹窗',
-    autoLoading: true,
-    onConfirm: () => {
-      console.log('dialog confirm')
-    },
+    width: '480',
+    top: '20vh',
     onCancel: () => {
       unMount()
     },
+    onConfirm: () => {
+      if (SelectRef.value) {
+        const { recorder, host, attender } = SelectRef.value
+        recorderId.value = unref(recorder)
+        hostId.value = unref(host)
+        attender.value = unref(attender)
+      }
+      unMount()
+    },
   }, {
-    default: () => h(ElButton, {
-      type: 'primary',
-      ref: ButtonRef,
-      onClick: () => {
-        console.log('click')
-      },
-    }, {
-      default: () => h('span', 'slot 透传'),
+    default: () => h(PopupSelect, {
+      ref: SelectRef,
+      recorderId: recorderId.value,
+      hostId: hostId.value,
+      attendeeIds: attendeeIds.value as unknown as string[],
     }),
   })
 }
@@ -62,9 +86,7 @@ function onGroupChoose() {
   console.log('onGroupChoose')
 }
 
-const { formFields, FormInstance } = useForm(userForm, async (data) => {
-  console.log(data)
-})
+const { formFields, FormInstance } = useForm(userForm)
 </script>
 
 <template>

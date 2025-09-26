@@ -1,9 +1,14 @@
 import { reqCatch } from '@/modules/http'
-
-export function getSystemUser(params: Record<string, any> = {}) {
-  return reqCatch({
-    url: '/system/user/list',
-    method: 'get',
-    params: Object.assign({}, { pageSize: 10, pageNum: 1 }, params),
+/**
+ * @description 查询用户
+ */
+export function getMeetingUser(data: Record<string, any> = {}) {
+  return reqCatch<{
+    total: number
+    rows: Record<string, any>[]
+  }>({
+    url: '/system/user/getMeetingUser',
+    method: 'post',
+    data: Object.assign({}, { pageSize: 10, pageNum: 1 }, data),
   })
 }

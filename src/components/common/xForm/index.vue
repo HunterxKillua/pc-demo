@@ -205,11 +205,14 @@ function clearValidate() {
   Object.assign(formModel, initializeFormModel())
 }
 
-function onSlotChange(key: string, value: any) {
+function onSlotChange(key: string, value: any, validate = true) {
   formModel[key] = value
-  nextTick(() => {
-    validateByKey(key)
-  })
+  console.log(key, value)
+  if (validate) {
+    nextTick(() => {
+      validateByKey(key)
+    })
+  }
 }
 
 function validateByKey(key: string, callback?: (msg: boolean) => void) {
@@ -331,7 +334,7 @@ defineExpose({
               :name="field.prop"
               :row="field"
               :value="formModel[field.prop]"
-              :update-key="(val: unknown) => onSlotChange(field.prop, val)"
+              :update-key="(val: unknown, validate?: boolean) => onSlotChange(field.prop, val, validate)"
             />
           </template>
 

@@ -1,11 +1,21 @@
 <script setup lang="ts">
+import { ElSelect } from 'element-plus'
 import { debounce } from 'lodash-es'
 
 interface Props {
   modelValue: string | Array<string | number> | null
-  fetch: (query: string, pager: { pageSize: number, pageNum: number }) => Promise<Record<string, any>[]>
+  fetch: (query: string, pager: { pageSize: number, pageNum: number }) => Promise<{
+    total: number
+    rows: Record<string, any>[]
+  }>
+  defaultOptions?: {
+    label: string
+    value: string
+    [x: string]: any
+  }[]
   labelKey?: string
   valueKey?: string
+  deptKey?: string
   placeholder?: string
   multiple?: boolean
   showTags?: boolean
@@ -17,6 +27,8 @@ const props = withDefaults(defineProps<Props>(), {
   placeholder: '请选择',
   multiple: false,
   showTags: true,
+  deptKey: 'ancestorNames',
+  defaultOptions: () => [],
 })
 
 const emit = defineEmits<{
@@ -24,7 +36,7 @@ const emit = defineEmits<{
   (e: 'change', v: string | Array<string | number>): void
 }>()
 
-const options = ref<Record<string, any>[]>([])
+const options = ref<Record<string, any>[]>(props.defaultOptions)
 const loading = ref(false)
 const loadingMore = ref(false)
 const pager = reactive<{
@@ -35,6 +47,7 @@ const pager = reactive<{
   pageNum: 1,
 })
 const queryText = ref('')
+const count = ref(0)
 
 const value = computed({
   get() {
@@ -45,14 +58,15 @@ const value = computed({
   },
 })
 
-function createDebouncedSearch(fetchFn: (query: string, pager: any) => Promise<unknown[]>, delay = 300) {
+function createDebouncedSearch(fetchFn: (query: string, pager: { pageSize: number, pageNum: number }) => Promise<any>, delay = 300) {
   async function search(query: string) {
     queryText.value = query
     pager.pageNum = 1
     loading.value = true
     try {
-      const res = await fetchFn(query, unref(pager))
-      options.value = res as Record<string, any>[]
+      const { total, rows } = await fetchFn(query, unref(pager))
+      count.value = total
+      options.value = rows as Record<string, any>[]
     }
     finally {
       loading.value = false
@@ -63,21 +77,38 @@ function createDebouncedSearch(fetchFn: (query: string, pager: any) => Promise<u
 
 const onSearch = createDebouncedSearch(props.fetch, 200)
 
+const selectRef = ref<InstanceType<typeof ElSelect> | null>(null)
+const scrollElement = ref<HTMLElement | null>(null)
+
 // 下拉展开时，初始加载
 async function onDropdownVisible(visible: boolean) {
   if (visible && options.value.length === 0) {
-    await onSearch('')
     await nextTick()
     bindScroll()
   }
+  else {
+    loadingMore.value = false
+  }
 }
 
-// 绑定下拉面板滚动事件
+// 绑定当前组件的下拉面板滚动事件
 function bindScroll() {
-  const popper = document.querySelector('.remote-select-popper .el-scrollbar__wrap')
-  if (popper) {
-    popper.removeEventListener('scroll', handleScroll)
-    popper.addEventListener('scroll', handleScroll, { passive: true })
+  unbindScroll()
+
+  if (selectRef.value?.wrapperRef) {
+    // 在当前组件的下拉面板内查找滚动容器
+    scrollElement.value = selectRef.value.wrapperRef
+    if (scrollElement.value) {
+      scrollElement.value.addEventListener('scroll', handleScroll, { passive: true })
+    }
+  }
+}
+
+// 清除当前组件的滚动事件
+function unbindScroll() {
+  if (scrollElement.value) {
+    scrollElement.value.removeEventListener('scroll', handleScroll)
+    scrollElement.value = null
   }
 }
 
@@ -86,25 +117,25 @@ async function handleScroll(e: Event) {
   const target = e.target as HTMLElement
   if (!target)
     return
-  const nearBottom = target.scrollHeight - target.scrollTop - target.clientHeight < 20
-  if (nearBottom && !loadingMore.value) {
+  const nearBottom = target.scrollHeight - target.scrollTop - target.clientHeight < 30
+  if (nearBottom && !loadingMore.value && (pager.pageNum * pager.pageSize) < count.value) {
     loadingMore.value = true
     pager.pageNum += 1
-    try {
-      const res = await props.fetch(queryText.value, unref(pager))
-      if (res.length) {
-        options.value.push(...res as Record<string, any>[])
-      }
+    const { total, rows } = await props.fetch(queryText.value, unref(pager))
+    count.value = total
+    if (rows.length) {
+      options.value.push(...rows as Record<string, any>[])
     }
-    finally {
+    setTimeout(() => {
       loadingMore.value = false
-    }
+    }, 500)
   }
 }
 </script>
 
 <template>
   <ElSelect
+    ref="selectRef"
     v-model="value"
     filterable
     remote
@@ -114,8 +145,12 @@ async function handleScroll(e: Event) {
     :multiple="multiple"
     :collapse-tags="multiple && showTags"
     :collapse-tags-tooltip="multiple && showTags"
+    :max-collapse-tags="3"
     :placeholder="placeholder"
+    :reserve-keyword="false"
+    remote-show-suffix
     popper-class="remote-select-popper"
+    @change="(val) => emit('change', val)"
     @visible-change="onDropdownVisible"
   >
     <ElOption
@@ -123,7 +158,17 @@ async function handleScroll(e: Event) {
       :key="item[valueKey]"
       :label="item[labelKey]"
       :value="item[valueKey]"
-    />
+      style="maxWidth: 480px;"
+    >
+      <div class="flex items-center justify-between">
+        <div class="mr-[12px]">
+          {{ item[labelKey] }}
+        </div>
+        <div class="flex-1 text-[#999] truncate">
+          {{ item[deptKey] || '' }}
+        </div>
+      </div>
+    </ElOption>
     <template v-if="loadingMore">
       <div class="loading-more">
         加载中...

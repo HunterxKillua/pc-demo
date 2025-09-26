@@ -14,6 +14,7 @@ interface Props {
   confirmLoading?: boolean
   autoLoading?: boolean
   appendToBody?: boolean
+  top?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -30,6 +31,7 @@ const props = withDefaults(defineProps<Props>(), {
   confirmLoading: false,
   autoLoading: false,
   appendToBody: false,
+  top: '10vh',
 })
 
 const emit = defineEmits<{
@@ -79,7 +81,7 @@ async function onSubmit() {
     :width="width"
     :close-on-click-modal="closeOnClickModal"
     :append-to-body="appendToBody"
-    top="10vh"
+    :top="top"
     v-bind="$attrs"
     @close="emit('close')"
   >

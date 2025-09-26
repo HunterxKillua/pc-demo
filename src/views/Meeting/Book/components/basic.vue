@@ -14,9 +14,7 @@ withDefaults(defineProps<Partial<BasicFormProps>>(), {
   tips: '预约本会议室包含场地使用费, 30元/半小时',
 })
 
-const { formFields, FormInstance, toValidate } = useForm(basicForm, async (data) => {
-  console.log(data)
-})
+const { formFields, FormInstance, toValidate } = useForm(basicForm)
 
 function initData(data: Record<string, any>) {
   FormInstance.value?.modifyFormData(data)
